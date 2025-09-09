@@ -1,0 +1,63 @@
+{
+  "name": "boltdb-explorer",
+  "displayName": "BoltDB Explorer",
+  "description": "Read-only Bolt/bbolt DB viewer for VS Code (multi-GB scale, Go helper)",
+  "version": "0.1.0",
+  "engines": { "vscode": "^1.103.0" },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "icon": "images/icon.png",
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "boltdbViewer.editor",
+        "displayName": "BoltDB Viewer",
+        "selector": [
+          { "filenamePattern": "*.db" },
+          { "filenamePattern": "*.bolt" },
+          { "filenamePattern": "*.boltdb" },
+          { "filenamePattern": "*.bbolt" }
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "boltdbViewer.open",
+        "title": "Open BoltDB Viewer"
+      },
+      {
+        "command": "boltdbViewer.exportBucket",
+        "title": "BoltDB Viewer: Export Bucket to JSONL"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "build:helper": "bash scripts/build-helper.sh",
+    "package-binaries": "node scripts/package-binaries.js",
+    "compile": "npm run build && npm run build:helper && npm run package-binaries",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.103.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3",
+    "esbuild": "^0.19.0",
+    "webpack": "^5.99.7",
+    "webpack-cli": "^6.0.1",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2"
+  },
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  }
+}
