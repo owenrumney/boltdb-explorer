@@ -25,16 +25,27 @@ function getPlatformBinary(): string {
 function execJson(args: string[], opts: cp.SpawnOptions = {}): Promise<any> {
   return new Promise((resolve, reject) => {
     const bin = getPlatformBinary();
+    console.log('[DEBUG] Executing:', bin, args.join(' '));
+    const startTime = Date.now();
     const proc = cp.spawn(bin, args, { ...opts, stdio: ['ignore', 'pipe', 'pipe'] });
     let out = '', err = '';
     proc.stdout.on('data', d => (out += d));
-    proc.stderr.on('data', d => (err += d));
+    proc.stderr.on('data', d => {
+      err += d;
+      console.log('[DEBUG] Go stderr:', d.toString());
+    });
     proc.on('close', code => {
+      const duration = Date.now() - startTime;
+      console.log(`[DEBUG] Go process finished in ${duration}ms with code ${code}`);
       if (code === 0) {
         try { resolve(JSON.parse(out)); } catch (e) { reject(e); }
       } else {
         reject(new Error(err || `exit code ${code}`));
       }
+    });
+    proc.on('error', (err) => {
+      console.log('[DEBUG] Go process error:', err);
+      reject(err);
     });
   });
 }
@@ -55,11 +66,16 @@ export async function listBuckets(dbPath: string, bucketPath: string) {
   return execJson(['lsb', '--db', dbPath, '--path', bucketPath]);
 }
 export async function listKeys(dbPath: string, bucketPath: string, opts: { prefix?: string, limit?: number, afterKey?: string } = {}) {
+  console.time(`boltClient-listKeys-${bucketPath || 'root'}`);
   const args = ['lsk', '--db', dbPath, '--path', bucketPath];
+  console.log('[DEBUG] listKeys args:', args);
   if (opts.prefix) { args.push('--prefix', opts.prefix); }
   if (opts.limit) { args.push('--limit', String(opts.limit)); }
   if (opts.afterKey) { args.push('--after-key', opts.afterKey); }
-  return execJson(args);
+  console.log('[DEBUG] Final listKeys args:', args);
+  const result = await execJson(args);
+  console.timeEnd(`boltClient-listKeys-${bucketPath || 'root'}`);
+  return result;
 }
 export async function readHead(dbPath: string, bucketPath: string, keyBase64: string, n = 65536) {
   return execJson(['get', '--db', dbPath, '--path', bucketPath, '--key', keyBase64, '--mode', 'head', '--n', String(n)]);
@@ -79,4 +95,21 @@ export async function search(dbPath: string, query: string, limit: number = 100,
     args.push('-case-sensitive');
   }
   return execJson(args);
+}
+
+// Write operations
+export async function createBucket(dbPath: string, bucketPath: string) {
+  return execJson(['write', '--db', dbPath, '--op', 'create-bucket', '--path', bucketPath]);
+}
+
+export async function putKeyValue(dbPath: string, bucketPath: string, keyBase64: string, valueBase64: string) {
+  return execJson(['write', '--db', dbPath, '--op', 'put', '--path', bucketPath, '--key', keyBase64, '--value', valueBase64]);
+}
+
+export async function deleteKey(dbPath: string, bucketPath: string, keyBase64: string) {
+  return execJson(['write', '--db', dbPath, '--op', 'delete-key', '--path', bucketPath, '--key', keyBase64]);
+}
+
+export async function deleteBucket(dbPath: string, bucketPath: string) {
+  return execJson(['write', '--db', dbPath, '--op', 'delete-bucket', '--path', bucketPath]);
 }

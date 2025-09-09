@@ -6,6 +6,7 @@ import (
 	"bolthelper/internal/get"
 	"bolthelper/internal/listkeys"
 	"bolthelper/internal/search"
+	"bolthelper/internal/write"
 	"flag"
 	"fmt"
 	"os"
@@ -60,6 +61,8 @@ func main() {
 		export.Run()
 	case "search":
 		search.Run()
+	case "write":
+		write.Run()
 	default:
 		fmt.Fprintln(os.Stderr, "unknown subcommand")
 		os.Exit(1)

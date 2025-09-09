@@ -12,3 +12,7 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+
+# Make sure images and screenshots are not ignored
+!images/**
+!screenshots/**

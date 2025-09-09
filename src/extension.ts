@@ -83,8 +83,23 @@ class BoltDBEditorProvider implements vscode.CustomReadonlyEditorProvider<vscode
     webviewPanel.webview.onDidReceiveMessage(async msg => {
       try {
         if (msg.type === 'listKeys') {
-          const res = await bolt.listKeys(dbPath, msg.bucketPath, { limit: 1000, afterKey: msg.afterKey });
-          post({ type: 'keys', ...res });
+          console.log(`[DEBUG] Extension received listKeys request:`, { 
+            bucketPath: msg.bucketPath, 
+            afterKey: msg.afterKey,
+            bucketPathLength: msg.bucketPath?.length || 0,
+            bucketPathEmpty: msg.bucketPath === '',
+            bucketPathUndefined: msg.bucketPath === undefined
+          });
+          console.time(`extension-listKeys-${msg.bucketPath || 'root'}`);
+          const res = await bolt.listKeys(dbPath, msg.bucketPath, { afterKey: msg.afterKey });
+          console.timeEnd(`extension-listKeys-${msg.bucketPath || 'root'}`);
+          // Include the bucketPath in the response to ensure UI consistency
+          post({ 
+            type: 'keys', 
+            bucketPath: msg.bucketPath,
+            ...res, 
+            afterKey: msg.afterKey 
+          });
         } else if (msg.type === 'readHead') {
           const res = await bolt.readHead(dbPath, msg.bucketPath, msg.keyBase64);
           post({ type: 'head', ...res });
@@ -99,6 +114,39 @@ class BoltDBEditorProvider implements vscode.CustomReadonlyEditorProvider<vscode
         } else if (msg.type === 'search') {
           const res = await bolt.search(dbPath, msg.query, msg.limit, msg.caseSensitive);
           post({ type: 'searchResults', ...res });
+        } else if (msg.type === 'createBucket') {
+          await bolt.createBucket(dbPath, msg.bucketPath);
+          // Ensure we send back the full path of the created bucket
+          post({ type: 'bucketCreated', bucketPath: msg.bucketPath });
+        } else if (msg.type === 'putKey') {
+          await bolt.putKeyValue(dbPath, msg.bucketPath, msg.keyBase64, msg.valueBase64);
+          // Return the exact bucketPath we received to maintain consistency
+          console.log('[DEBUG] Extension keyPut response with bucketPath:', msg.bucketPath);
+          post({ 
+            type: 'keyPut', 
+            bucketPath: msg.bucketPath, 
+            keyBase64: msg.keyBase64 
+          });
+        } else if (msg.type === 'deleteKey') {
+          console.log('[DEBUG] Extension received deleteKey:', msg);
+          try {
+            await bolt.deleteKey(dbPath, msg.bucketPath, msg.keyBase64);
+            post({ type: 'keyDeleted', bucketPath: msg.bucketPath, keyBase64: msg.keyBase64 });
+          } catch (error: any) {
+            console.error('[ERROR] Failed to delete key:', error);
+            post({ type: 'error', message: `Failed to delete key: ${error.message}` });
+            return; // Return early to avoid outer catch block
+          }
+        } else if (msg.type === 'deleteBucket') {
+          console.log('[DEBUG] Extension received deleteBucket:', msg);
+          try {
+            await bolt.deleteBucket(dbPath, msg.bucketPath);
+            post({ type: 'bucketDeleted', bucketPath: msg.bucketPath });
+          } catch (error: any) { // Type as 'any' to access message property
+            console.error('[ERROR] Failed to delete bucket:', error);
+            post({ type: 'error', message: `Failed to delete bucket: ${error.message}` });
+            return; // Return early to avoid outer catch block
+          }
         }
       } catch (e: any) {
         post({ type: 'error', message: e.message });
