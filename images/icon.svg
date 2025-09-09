@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Database with yellow lightning bolt and magnifying glass">
+  <defs>
+    <style>
+      .db-fill { fill: #20262C; }
+      .accent { fill: #FFC928; }
+      .glass { fill: #20262C; }
+      .stroke { stroke: #0F1214; stroke-width: 8; stroke-linejoin: miter; stroke-linecap: butt; }
+      /* tweak stroke width if you need heavier/lighter outlines */
+    </style>
+  </defs>
+
+  <!-- Database (stacked cylinder) -->
+  <g class="stroke db-fill">
+    <!-- top ellipse -->
+    <ellipse cx="104" cy="56" rx="72" ry="28"/>
+    <!-- body -->
+    <path d="M32 56v96c0 15.5 32.2 28 72 28s72-12.5 72-28V56" />
+    <!-- top slice line -->
+    <path d="M32 56c0 15.5 32.2 28 72 28s72-12.5 72-28" fill="none"/>
+    <!-- first slice line (top third) -->
+    <path d="M32 88c0 10.5 32.2 28 72 28s72-12.5 72-28" fill="none"/>
+    <!-- second slice line (middle third) -->
+    <path d="M32 120c0 10.5 32.2 28 72 28s72-12.5 72-28" fill="none"/>
+    <!-- bottom ellipse (implied by body; add base line for crisp edge) -->
+    <path d="M32 152c0 15.5 32.2 28 72 28s72-12.5 72-28" fill="none"/>
+  </g>
+
+  <!-- Lightning bolt -->
+  <path class="stroke accent"
+        d="M88 54 l-34 62h28l-18 52 56-74h-28l24-40z"/>
+
+  <!-- Magnifying glass -->
+  <defs>
+    <mask id="lensMask">
+      <rect width="256" height="256" fill="white"/>
+      <circle cx="160" cy="140" r="28" fill="black"/>
+    </mask>
+  </defs>
+  <g class="stroke glass">
+    <!-- lens with cutout -->
+    <circle cx="160" cy="140" r="44" mask="url(#lensMask)" />
+    <!-- handle -->
+    <path d="M192 172l30 30" stroke-width="12" />
+    <!-- inner lens highlight ring -->
+    <circle cx="160" cy="140" r="28" fill="none"/>
+  </g>
+
+  <!-- Optional: mask the bolt “piercing” the DB (keeps edges crisp) -->
+  <mask id="dbMask">
+    <rect width="256" height="256" fill="#fff"/>
+    <g>
+      <ellipse cx="104" cy="56" rx="72" ry="28" fill="#000"/>
+      <path d="M32 56v96c0 15.5 32.2 28 72 28s72-12.5 72-28V56z" fill="#000"/>
+    </g>
+  </mask>
+  <!-- Repaint bolt only where it overlaps DB for a clean inset effect -->
+  <path class="accent"
+        d="M88 54 l-34 62h28l-18 52 56-74h-28l24-40z"
+        mask="url(#dbMask)" opacity="0.08"/>
+</svg>

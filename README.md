@@ -1,71 +1,112 @@
-# boltdb-explorer README
+# BoltDB Explorer
 
-This is the README for your extension "boltdb-explorer". After writing up a brief description, we recommend including the following sections.
+A Visual Studio Code extension for viewing and manipulating BoltDB database files. BoltDB Explorer provides a convenient interface to browse, search, and edit key-value pairs and buckets in BoltDB files directly within VS Code.
+
+## Screenshots
+![BoltDB Explorer Overview](https://raw.githubusercontent.com/owenrumney/boltdb-explorer/main/images/explorer.png)
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Browse** bucket hierarchies and key-value pairs with an intuitive tree-like interface
+- **Search** across keys and values to quickly find content within the database
+- **View** values with automatic formatting for JSON and text content
+- **Create** new buckets and key-value pairs
+- **Edit** existing values with a built-in editor
+- **Delete** buckets and key-value pairs
+- **Export** values to files
+- **Navigate** through nested buckets with breadcrumb navigation
 
-For example if there is an image subfolder under your extension project workspace:
+## Usage
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Open a folder containing a BoltDB file (`.db` extension)
+2. Right-click on the file and select "Open with BoltDB Explorer"
+3. Use the explorer interface to navigate, view, and edit the database content
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### Interface Overview
+
+The BoltDB Explorer interface consists of:
+
+- **Breadcrumb navigation** at the top to show your current path
+- **Left panel** showing buckets and keys at the current level
+- **Right panel** displaying key values or bucket information
+- **Search box** for finding keys and values across the database
+- **Write mode toggle** to enable editing operations
+
+### Write Operations
+
+Toggle the "Write Mode" switch in the top-right corner to enable the following operations:
+
+- **Add Bucket**: Create new buckets at the current level
+- **Add Key**: Add new key-value pairs to the current bucket
+- **Delete**: Remove buckets or key-value pairs
+- **Edit Value**: Modify the value of an existing key
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- Visual Studio Code version 1.70.0 or higher
+- No additional dependencies required - the extension includes pre-built binaries for Windows, macOS, and Linux
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+This extension doesn't add any VS Code settings yet.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- Very large values (over 64KB) are previewed only partially in the UI
+- Complex nested bucket structures with many keys may experience performance slowdowns
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
 ### 1.0.0
 
-Initial release of ...
+Initial release of BoltDB Explorer with the following features:
+- Browsing bucket hierarchies and key-value pairs
+- Viewing formatted values (JSON, text)
+- Creating, editing, and deleting buckets and keys
+- Searching across the database
+- Exporting values to files
 
-### 1.0.1
+## Development
 
-Fixed issue #.
+If you want to contribute to BoltDB Explorer, follow these steps to set up the development environment:
 
-### 1.1.0
+1. Clone the repository
+2. Run `npm install` to install the required dependencies
+3. Build the Go helper binaries:
+   ```bash
+   cd go
+   go build -o ../bin/bolthelper-[platform]-[arch] ./cmd/bolthelper
+   ```
+4. Run `npm run watch` to compile TypeScript and watch for changes
+5. Press F5 in VS Code to launch a new window with the extension loaded
 
-Added features X, Y, and Z.
+### Project Structure
 
----
+- `src/` - TypeScript source for the VS Code extension
+  - `extension.ts` - Main extension entry point
+  - `boltClient.ts` - Interface to the Go helper binary
+  - `webview/` - React webview UI components
+- `go/` - Go source for BoltDB operations
+  - `cmd/bolthelper/` - CLI entry point
+  - `internal/` - BoltDB operation implementations
+- `bin/` - Pre-built helper binaries for different platforms
 
-## Following extension guidelines
+## Contributing
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+Contributions are welcome! Here are some ways you can contribute:
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+1. Report bugs and request features by creating issues
+2. Improve documentation
+3. Submit pull requests with bug fixes or new features
+4. Share the extension with others
 
-## Working with Markdown
+## License
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+This extension is licensed under the MIT License. See the LICENSE file for details.
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+## Credits
 
-## For more information
+- BoltDB Explorer uses the [bbolt](https://github.com/etcd-io/bbolt) Go package, a maintained fork of the original BoltDB
+- Icon design inspired by database and key-value store concepts
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
-**Enjoy!**

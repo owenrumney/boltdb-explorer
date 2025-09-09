@@ -1,10 +1,26 @@
 {
   "name": "boltdb-explorer",
   "displayName": "BoltDB Explorer",
-  "description": "Read-only Bolt/bbolt DB viewer for VS Code (multi-GB scale, Go helper)",
-  "version": "0.1.0",
-  "engines": { "vscode": "^1.103.0" },
-  "categories": ["Other"],
+  "description": "Browse, search, edit and manage Bolt/bbolt DB files directly in VS Code",
+  "version": "1.0.1",
+  "publisher": "owenrumney",
+  "author": {
+    "name": "Owen Rumney"
+  },
+  "engines": { "vscode": "^1.70.0" },
+  "categories": ["Other", "Data Science"],
+  "keywords": ["boltdb", "bbolt", "database", "key-value", "kv", "explorer", "viewer", "editor"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/owenrumney/boltdb-explorer.git"
+  },
+  "galleryBanner": {
+    "color": "#1e415e",
+    "theme": "dark"
+  },
+  "bugs": {
+    "url": "https://github.com/owenrumney/boltdb-explorer/issues"
+  },
   "activationEvents": [],
   "main": "./dist/extension.js",
   "icon": "images/icon.png",
@@ -38,10 +54,13 @@
     "build:helper": "bash scripts/build-helper.sh",
     "package-binaries": "node scripts/package-binaries.js",
     "compile": "npm run build && npm run build:helper && npm run package-binaries",
-    "vscode:prepublish": "npm run compile"
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package",
+    "publish": "vsce publish",
+    "release": "npm run compile && npm run package && npm run publish"
   },
   "devDependencies": {
-    "@types/vscode": "^1.103.0",
+    "@types/vscode": "^1.70.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
     "@types/react": "^18.0.0",
@@ -54,7 +73,8 @@
     "webpack": "^5.99.7",
     "webpack-cli": "^6.0.1",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^2.24.0"
   },
   "dependencies": {
     "react": "^18.0.0",

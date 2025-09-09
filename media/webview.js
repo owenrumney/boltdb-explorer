@@ -2435,7 +2435,7 @@
           var HostPortal = 4;
           var HostComponent = 5;
           var HostText = 6;
-          var Fragment = 7;
+          var Fragment2 = 7;
           var Mode = 8;
           var ContextConsumer = 9;
           var ContextProvider = 10;
@@ -3591,7 +3591,7 @@
                 return "DehydratedFragment";
               case ForwardRef:
                 return getWrappedName$1(type, type.render, "ForwardRef");
-              case Fragment:
+              case Fragment2:
                 return "Fragment";
               case HostComponent:
                 return type;
@@ -11992,7 +11992,7 @@
               }
             }
             function updateFragment2(returnFiber, current2, fragment, lanes, key) {
-              if (current2 === null || current2.tag !== Fragment) {
+              if (current2 === null || current2.tag !== Fragment2) {
                 var created = createFiberFromFragment(fragment, returnFiber.mode, lanes, key);
                 created.return = returnFiber;
                 return created;
@@ -12395,7 +12395,7 @@
                 if (child.key === key) {
                   var elementType = element.type;
                   if (elementType === REACT_FRAGMENT_TYPE) {
-                    if (child.tag === Fragment) {
+                    if (child.tag === Fragment2) {
                       deleteRemainingChildren(returnFiber, child.sibling);
                       var existing = useFiber(child, element.props.children);
                       existing.return = returnFiber;
@@ -17872,7 +17872,7 @@
                 var _resolvedProps2 = workInProgress2.elementType === type ? _unresolvedProps2 : resolveDefaultProps(type, _unresolvedProps2);
                 return updateForwardRef(current2, workInProgress2, type, _resolvedProps2, renderLanes2);
               }
-              case Fragment:
+              case Fragment2:
                 return updateFragment(current2, workInProgress2, renderLanes2);
               case Mode:
                 return updateMode(current2, workInProgress2, renderLanes2);
@@ -18145,7 +18145,7 @@
               case SimpleMemoComponent:
               case FunctionComponent:
               case ForwardRef:
-              case Fragment:
+              case Fragment2:
               case Mode:
               case Profiler:
               case ContextConsumer:
@@ -22404,7 +22404,7 @@
             return fiber;
           }
           function createFiberFromFragment(elements, mode, lanes, key) {
-            var fiber = createFiber(Fragment, elements, key, mode);
+            var fiber = createFiber(Fragment2, elements, key, mode);
             fiber.lanes = lanes;
             return fiber;
           }
@@ -24518,13 +24518,38 @@
     const [isSearching, setIsSearching] = (0, import_react.useState)(false);
     const [searchCaseSensitive, setSearchCaseSensitive] = (0, import_react.useState)(false);
     const [isLoading, setIsLoading] = (0, import_react.useState)(false);
+    const [isWriteMode, setIsWriteMode] = (0, import_react.useState)(false);
+    const [showAddBucketForm, setShowAddBucketForm] = (0, import_react.useState)(false);
+    const [showAddKeyForm, setShowAddKeyForm] = (0, import_react.useState)(false);
+    const [newBucketName, setNewBucketName] = (0, import_react.useState)("");
+    const [newKeyName, setNewKeyName] = (0, import_react.useState)("");
+    const [newKeyValue, setNewKeyValue] = (0, import_react.useState)("");
+    const [isEditingValue, setIsEditingValue] = (0, import_react.useState)(false);
+    const [editedValue, setEditedValue] = (0, import_react.useState)("");
+    const [confirmDelete, setConfirmDelete] = (0, import_react.useState)(null);
     const searchInputRef = (0, import_react.useRef)(null);
     function post(msg) {
       vscode.postMessage(msg);
     }
     function loadKeys(bucketPath, afterKey) {
+      console.log("[DEBUG] loadKeys called with bucketPath:", bucketPath, "afterKey:", afterKey);
+      console.time(`loadKeys-${bucketPath || "root"}`);
       setIsLoading(true);
-      post({ type: "listKeys", bucketPath, afterKey });
+      setError(null);
+      const normalizedPath = bucketPath || "";
+      if (normalizedPath !== currentPath) {
+        console.log("[DEBUG] Updating currentPath from:", currentPath, "to:", normalizedPath);
+        setCurrentPath(normalizedPath);
+      }
+      if (normalizedPath) {
+        console.log("[DEBUG] Current path parts:", normalizedPath.split("/"));
+      }
+      post({ type: "listKeys", bucketPath: normalizedPath, afterKey });
+      setTimeout(() => {
+        setIsLoading(false);
+        console.log("[DEBUG] Loading timeout - forced stop");
+        console.timeEnd(`loadKeys-${bucketPath || "root"}`);
+      }, 1e4);
     }
     function handleSearch() {
       if (searchQuery.trim() === "") {
@@ -24533,6 +24558,107 @@
       }
       setIsSearching(true);
       post({ type: "search", query: searchQuery.trim(), limit: 100, caseSensitive: searchCaseSensitive });
+    }
+    function handleCreateBucket() {
+      if (newBucketName.trim() === "")
+        return;
+      const bucketPath = currentPath ? `${currentPath}/${newBucketName.trim()}` : newBucketName.trim();
+      console.log("[DEBUG] Creating bucket with path:", bucketPath);
+      post({ type: "createBucket", bucketPath });
+      setNewBucketName("");
+      setShowAddBucketForm(false);
+    }
+    function handlePutKey() {
+      if (newKeyName.trim() === "" || currentPath === "")
+        return;
+      const keyName = newKeyName.trim();
+      const bucketPath = currentPath;
+      console.log("[DEBUG] Adding key with detailed info:", {
+        bucketPath,
+        keyName,
+        valueLength: newKeyValue.length
+      });
+      const keyBase64 = btoa(keyName);
+      const valueBase64 = btoa(newKeyValue);
+      console.log("[DEBUG] Bucket path parts:", bucketPath.split("/"));
+      pendingHighlightRef.current = {
+        bucketPath,
+        keyBase64,
+        valueSize: newKeyValue.length,
+        loadedKeys: []
+      };
+      post({ type: "putKey", bucketPath, keyBase64, valueBase64 });
+      setNewKeyName("");
+      setNewKeyValue("");
+      setShowAddKeyForm(false);
+    }
+    function handleDeleteKey(key) {
+      if (!isWriteMode || key.isBucket)
+        return;
+      console.log("[DEBUG] handleDeleteKey called for:", safeAtob(key.keyBase64));
+      setConfirmDelete({
+        item: key,
+        type: "key",
+        name: safeAtob(key.keyBase64)
+      });
+    }
+    function handleDeleteBucket(key) {
+      if (!isWriteMode || !key.isBucket)
+        return;
+      const bucketName = safeAtob(key.keyBase64);
+      const bucketPath = currentPath;
+      console.log("[DEBUG] handleDeleteBucket - FULL DETAILS:", {
+        bucketName,
+        currentPath,
+        selectedBucketPath: bucketPath
+      });
+      setConfirmDelete({
+        item: key,
+        type: "bucket",
+        name: bucketName,
+        path: bucketPath
+      });
+    }
+    function handleConfirmDelete() {
+      if (!confirmDelete)
+        return;
+      setSelectedKey(null);
+      setPreview(null);
+      if (confirmDelete.type === "key") {
+        console.log("[DEBUG] Delete confirmed, sending deleteKey message");
+        const keyBucketPath = currentPath;
+        console.log("[DEBUG] Deleting key from bucket path:", keyBucketPath);
+        post({
+          type: "deleteKey",
+          bucketPath: keyBucketPath,
+          keyBase64: confirmDelete.item.keyBase64
+        });
+      } else if (confirmDelete.type === "bucket") {
+        console.log("[DEBUG] Delete confirmed, sending deleteBucket message with path:", currentPath);
+        post({ type: "deleteBucket", bucketPath: currentPath });
+      }
+      setConfirmDelete(null);
+    }
+    function handleCancelDelete() {
+      setConfirmDelete(null);
+    }
+    function handleEditValue() {
+      if (!selectedKey || !preview)
+        return;
+      setIsEditingValue(true);
+      setEditedValue(preview.content);
+    }
+    function handleSaveValue() {
+      if (!selectedKey || !isEditingValue)
+        return;
+      const keyBase64 = selectedKey.keyBase64;
+      const valueBase64 = btoa(editedValue);
+      post({ type: "putKey", bucketPath: currentPath, keyBase64, valueBase64 });
+      setIsEditingValue(false);
+    }
+    function handleCancelEdit() {
+      setIsEditingValue(false);
+      setEditedValue("");
     }
     const pendingHighlightRef = (0, import_react.useRef)(null);
     function navigateToSearchResult(result) {
@@ -24559,38 +24685,71 @@
     (0, import_react.useEffect)(() => {
       const listener = (event) => {
         const msg = event.data;
+        console.log(`[DEBUG] Message received: ${msg.type}`, {
+          messageType: msg.type,
+          currentPath,
+          messageData: msg
+        });
+        if (msg.type === "bucketCreated" || msg.type === "bucketDeleted") {
+          console.log("[DEBUG] Bucket operation details:", {
+            operation: msg.type,
+            path: msg.bucketPath,
+            currentPathBefore: currentPath
+          });
+        }
         if (msg.type === "keys") {
           const res = msg;
-          console.log("[DEBUG] Keys loaded:", res.items.map((k) => safeAtob(k.keyBase64)));
-          if (res.items.length === 0 && !nextAfterKey)
-            setKeys([]);
-          else
-            setKeys((prev) => msg.afterKey ? [...prev, ...res.items] : res.items);
+          const responseBucketPath = msg.bucketPath || "";
+          console.log("[DEBUG] Keys response received with detailed info:", {
+            responseBucketPath,
+            currentPath,
+            keysCount: res.items?.length || 0,
+            afterKey: msg.afterKey
+          });
+          console.timeEnd(`loadKeys-${responseBucketPath || "root"}`);
+          if (currentPath !== responseBucketPath) {
+            console.log(
+              "[DEBUG] Fixing path mismatch - updating currentPath from",
+              currentPath,
+              "to",
+              responseBucketPath
+            );
+            setCurrentPath(responseBucketPath);
+          }
+          setKeys((prev) => msg.afterKey ? [...prev, ...res.items || []] : res.items || []);
           setNextAfterKey(res.nextAfterKey);
           setIsLoading(false);
           const pending = pendingHighlightRef.current;
           if (pending) {
-            console.log("[DEBUG] (NO PATH CHECK) Looking for keyBase64:", pending.keyBase64, "in loaded keys.");
+            console.log("[DEBUG] Looking for keyBase64:", pending.keyBase64, "in loaded keys.");
             console.log("[DEBUG] Decoded pending.keyBase64:", safeAtob(pending.keyBase64));
+            console.log("[DEBUG] Number of keys loaded:", res.items.length);
             res.items.forEach((k, idx) => {
               console.log(`[DEBUG] Page key[${idx}]:`, k.keyBase64, "| Decoded:", safeAtob(k.keyBase64));
             });
             const foundInPage = res.items.find((k) => k.keyBase64 === pending.keyBase64);
             if (foundInPage) {
-              console.log("[DEBUG] About to setSelectedKey:", safeAtob(foundInPage.keyBase64));
+              console.log("[DEBUG] Found key to select:", safeAtob(foundInPage.keyBase64));
               setSelectedKey(null);
-              setSelectedKey(foundInPage);
-              console.log("[DEBUG] setSelectedKey called for:", safeAtob(foundInPage.keyBase64));
-              post({ type: "readHead", bucketPath: pending.bucketPath, keyBase64: pending.keyBase64 });
-              pendingHighlightRef.current = null;
+              setTimeout(() => {
+                setSelectedKey(foundInPage);
+                post({ type: "readHead", bucketPath: pending.bucketPath, keyBase64: pending.keyBase64 });
+                pendingHighlightRef.current = null;
+              }, 10);
             } else if (res.nextAfterKey) {
               console.log("[DEBUG] Key not found in this page, paging for more... nextAfterKey:", res.nextAfterKey);
               pendingHighlightRef.current = pending;
               loadKeys(msg.bucketPath || "", res.nextAfterKey);
             } else {
               console.log("[DEBUG] Key not found after paging all pages:", safeAtob(pending.keyBase64));
-              setSelectedKey(null);
-              setPreview(null);
+              const syntheticKey = {
+                keyBase64: pending.keyBase64,
+                valueSize: pending.valueSize || 1,
+                isBucket: false
+              };
+              console.log("[DEBUG] Using synthetic key as fallback:", safeAtob(syntheticKey.keyBase64));
+              setSelectedKey(syntheticKey);
+              post({ type: "readHead", bucketPath: pending.bucketPath, keyBase64: pending.keyBase64 });
               pendingHighlightRef.current = null;
             }
           }
@@ -24598,13 +24757,101 @@
           const res = msg;
           const content = safeBase64ToUtf8(res.valueHeadBase64);
           console.log("[DEBUG] Preview loaded:", content.slice(0, 100));
+          if (selectedKey && !selectedKey.isBucket) {
+            setSelectedKey({
+              ...selectedKey,
+              valueSize: res.totalSize
+            });
+          }
           setPreview({ content, totalSize: res.totalSize });
         } else if (msg.type === "error") {
+          console.log("[DEBUG] Error received:", msg.message);
           setError(msg.message);
           setIsLoading(false);
         } else if (msg.type === "searchResults") {
           setSearchResults(msg.items || []);
           setIsSearching(false);
+        } else if (msg.type === "bucketCreated") {
+          const newBucketPath = msg.bucketPath;
+          console.log("[DEBUG] Bucket created:", newBucketPath);
+          const bucketName = newBucketPath.split("/").pop() || "";
+          const bucketNameBase64 = btoa(bucketName);
+          setCurrentPath(newBucketPath);
+          setNextAfterKey(void 0);
+          setTimeout(() => {
+            loadKeys(newBucketPath);
+            const newBucketKey = {
+              keyBase64: bucketNameBase64,
+              valueSize: 0,
+              isBucket: true
+            };
+            setSelectedKey(newBucketKey);
+            setPreview({ content: "This is a newly created bucket.", totalSize: 0 });
+            console.log("[DEBUG] New bucket selected:", {
+              name: bucketName,
+              base64: bucketNameBase64,
+              path: newBucketPath
+            });
+          }, 100);
+        } else if (msg.type === "keyPut") {
+          const bucketPath = msg.bucketPath;
+          const keyBase64 = msg.keyBase64;
+          console.log("[DEBUG] Key put, detailed info:", {
+            serverBucketPath: bucketPath,
+            currentPath,
+            keyBase64,
+            decodedKey: safeAtob(keyBase64)
+          });
+          if (currentPath !== bucketPath) {
+            console.log("[DEBUG] Correcting currentPath from", currentPath, "to", bucketPath);
+            setCurrentPath(bucketPath);
+          }
+          const isEditing = isEditingValue && selectedKey;
+          const keyToSelect = isEditing ? selectedKey.keyBase64 : keyBase64;
+          pendingHighlightRef.current = {
+            bucketPath,
+            // Use the server-provided bucket path
+            keyBase64: keyToSelect,
+            valueSize: 1,
+            // Initial placeholder size
+            loadedKeys: []
+          };
+          console.log("[DEBUG] Setting pendingHighlight to auto-select key:", safeAtob(keyToSelect));
+          setNextAfterKey(void 0);
+          setTimeout(() => {
+            setSelectedKey(null);
+            setPreview(null);
+            loadKeys(bucketPath);
+          }, 100);
+        } else if (msg.type === "keyDeleted") {
+          const bucketPath = msg.bucketPath;
+          console.log("[DEBUG] Key deleted, refreshing path:", {
+            bucketPath,
+            currentPath,
+            deletedKey: msg.keyBase64,
+            decodedKey: safeAtob(msg.keyBase64)
+          });
+          setSelectedKey(null);
+          setPreview(null);
+          if (currentPath !== bucketPath) {
+            console.log("[DEBUG] Correcting currentPath from", currentPath, "to", bucketPath);
+            setCurrentPath(bucketPath);
+          }
+          setNextAfterKey(void 0);
+          setTimeout(() => loadKeys(bucketPath), 100);
+        } else if (msg.type === "bucketDeleted") {
+          const deletedBucketPath = msg.bucketPath;
+          console.log("[DEBUG] Bucket deleted - navigating to parent:", {
+            deletedBucketPath,
+            currentPath
+          });
+          const parentPath = deletedBucketPath.includes("/") ? deletedBucketPath.substring(0, deletedBucketPath.lastIndexOf("/")) : "";
+          console.log("[DEBUG] Navigating to parent path:", parentPath);
+          setSelectedKey(null);
+          setPreview(null);
+          setCurrentPath(parentPath);
+          setNextAfterKey(void 0);
+          loadKeys(parentPath);
         }
       };
       window.addEventListener("message", listener);
@@ -24614,8 +24861,12 @@
     function handleKeyClick(key) {
       pendingHighlightRef.current = null;
       setSelectedKey(key);
+      setError(null);
+      setIsEditingValue(false);
+      setEditedValue("");
       if (key.isBucket) {
         const newPath = currentPath ? `${currentPath}/${safeAtob(key.keyBase64)}` : safeAtob(key.keyBase64);
+        console.log("[DEBUG] Navigating to bucket:", newPath);
         setCurrentPath(newPath);
         setKeys([]);
         setNextAfterKey(void 0);
@@ -24669,11 +24920,31 @@
     }, [selectedKey]);
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "app", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { children: "BoltDB Viewer" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "header-top", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { children: "BoltDB Viewer" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "mode-toggle", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+              "input",
+              {
+                type: "checkbox",
+                checked: isWriteMode,
+                onChange: (e) => setIsWriteMode(e.target.checked)
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "toggle-slider" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "toggle-label", children: isWriteMode ? "Write Mode" : "Read Only" })
+          ] }) })
+        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "breadcrumb", children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: navigateToRoot, children: "Root" }),
-          currentPath && currentPath.split("/").map((part, i, arr) => {
-            const pathUpToHere = arr.slice(0, i + 1).join("/");
+          currentPath && currentPath.split("/").filter(Boolean).map((part, i, arr) => {
+            const pathParts = arr.slice(0, i + 1);
+            const pathUpToHere = pathParts.join("/");
+            console.log(`[DEBUG] Breadcrumb part ${i}:`, {
+              part,
+              pathUpToHere,
+              fullCurrentPath: currentPath
+            });
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
               " / ",
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
@@ -24687,8 +24958,8 @@
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-section", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-controls", style: { position: "relative", display: "flex", alignItems: "center" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { position: "relative", flex: 1, height: 40, display: "flex", alignItems: "center", background: "none" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-controls", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-input-container", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
               "input",
               {
@@ -24699,40 +24970,13 @@
                 onChange: (e) => setSearchQuery(e.target.value),
                 placeholder: "Search keys/values...",
                 onKeyDown: (e) => e.key === "Enter" && handleSearch(),
-                spellCheck: false,
-                style: {
-                  width: "100%",
-                  height: 40,
-                  outline: "none",
-                  border: "1.5px solid var(--vscode-input-border, #e0e0e0)",
-                  background: "var(--vscode-input-background, #fff)",
-                  color: "var(--vscode-input-foreground, #222)",
-                  borderRadius: 0,
-                  padding: "0 44px 0 18px",
-                  fontSize: 16,
-                  boxSizing: "border-box",
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  transition: "border 0.2s",
-                  position: "relative",
-                  zIndex: 2,
-                  boxShadow: "0 1px 4px 0 var(--vscode-widget-shadow, rgba(0,0,0,0.04))",
-                  fontFamily: "inherit"
-                }
+                spellCheck: false
               }
             ),
-            searchQuery && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: {
-              position: "absolute",
-              right: 6,
-              top: 0,
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              zIndex: 3
-            }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            searchQuery && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "clear-search-container", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
               "button",
               {
-                className: "clear-search",
+                className: "clear-search-button",
                 onClick: () => {
                   setSearchQuery("");
                   setSearchResults([]);
@@ -24740,32 +24984,8 @@
                     searchInputRef.current.focus();
                   }
                 },
-                style: {
-                  background: "var(--vscode-input-background, #1e1e1e)",
-                  border: "1.5px solid var(--vscode-input-border, #e0e0e0)",
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                  padding: 0,
-                  width: 28,
-                  height: 28,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--vscode-input-foreground, #d6cfa6)",
-                  fontSize: "1.2em",
-                  boxShadow: "none",
-                  transition: "background 0.15s, border 0.15s"
-                },
                 title: "Clear search",
                 tabIndex: -1,
-                onMouseOver: (e) => {
-                  e.currentTarget.style.background = "var(--vscode-inputOption-hoverBackground, #232323)";
-                  e.currentTarget.style.border = "1.5px solid var(--vscode-inputOption-activeBorder, #c5c5c5)";
-                },
-                onMouseOut: (e) => {
-                  e.currentTarget.style.background = "var(--vscode-input-background, #1e1e1e)";
-                  e.currentTarget.style.border = "1.5px solid var(--vscode-input-border, #e0e0e0)";
-                },
                 children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { width: "16", height: "16", viewBox: "0 0 16 16", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "8", cy: "8", r: "7", stroke: "var(--vscode-input-foreground, #d6cfa6)", strokeWidth: "2", fill: "none" }),
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "5.5", y1: "5.5", x2: "10.5", y2: "10.5", stroke: "var(--vscode-input-foreground, #d6cfa6)", strokeWidth: "2", strokeLinecap: "round" }),
@@ -24774,25 +24994,16 @@
               }
             ) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleSearch, disabled: isSearching, className: "search-button", style: {
-            marginLeft: "0.75em",
-            height: 40,
-            minWidth: 80,
-            borderRadius: 8,
-            fontSize: 16,
-            fontFamily: "inherit",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: isSearching ? "var(--vscode-button-secondaryBackground, #bfc9c9)" : "var(--vscode-button-background, #46605a)",
-            color: "var(--vscode-button-foreground, #fff)",
-            border: "none",
-            boxShadow: "0 1px 2px 0 var(--vscode-widget-shadow, rgba(0,0,0,0.06))",
-            cursor: isSearching ? "not-allowed" : "pointer",
-            transition: "background 0.15s",
-            padding: "0 18px"
-          }, children: isSearching ? "Searching..." : "Search" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "case-sensitive-label", style: { marginLeft: "0.5em" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "button",
+            {
+              onClick: handleSearch,
+              disabled: isSearching,
+              className: "search-button",
+              children: isSearching ? "Searching..." : "Search"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "case-sensitive-label", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
               "input",
               {
@@ -24826,39 +25037,154 @@
           isLoading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "loading-indicator", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "loading-spinner" }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: "Loading database..." })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Key" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Size" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Type" })
-            ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tbody", { children: keys.map((k, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-              "tr",
-              {
-                className: selectedKey && selectedKey.keyBase64 === k.keyBase64 ? "selected" : "",
-                onClick: () => handleKeyClick(k),
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { title: safeAtob(k.keyBase64), children: safeAtob(k.keyBase64).slice(0, 40) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: formatSize(k.valueSize) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: k.isBucket ? "Bucket" : "Value" })
-                ]
-              },
-              i
-            )) })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "table-header", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { children: "Database Contents" }),
+              isWriteMode && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "table-actions", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "button",
+                  {
+                    onClick: () => setShowAddBucketForm(!showAddBucketForm),
+                    className: "write-button",
+                    children: showAddBucketForm ? "Cancel" : "+ Add Bucket"
+                  }
+                ),
+                currentPath && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "button",
+                  {
+                    onClick: () => setShowAddKeyForm(!showAddKeyForm),
+                    className: "write-button",
+                    children: showAddKeyForm ? "Cancel" : "+ Add Key"
+                  }
+                )
+              ] })
+            ] }),
+            isWriteMode && showAddBucketForm && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-form", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "input",
+                {
+                  type: "text",
+                  value: newBucketName,
+                  onChange: (e) => setNewBucketName(e.target.value),
+                  placeholder: "Bucket name",
+                  onKeyDown: (e) => {
+                    if (e.key === "Enter")
+                      handleCreateBucket();
+                    if (e.key === "Escape")
+                      setShowAddBucketForm(false);
+                  }
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleCreateBucket, disabled: !newBucketName.trim(), children: "Create Bucket" })
+            ] }),
+            isWriteMode && showAddKeyForm && currentPath && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "add-form", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "input",
+                {
+                  type: "text",
+                  value: newKeyName,
+                  onChange: (e) => setNewKeyName(e.target.value),
+                  placeholder: "Key name",
+                  onKeyDown: (e) => {
+                    if (e.key === "Enter" && newKeyName.trim()) {
+                      const valueInput = e.currentTarget.nextElementSibling;
+                      if (valueInput)
+                        valueInput.focus();
+                    }
+                    if (e.key === "Escape")
+                      setShowAddKeyForm(false);
+                  }
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "input",
+                {
+                  type: "text",
+                  value: newKeyValue,
+                  onChange: (e) => setNewKeyValue(e.target.value),
+                  placeholder: "Value",
+                  onKeyDown: (e) => {
+                    if (e.key === "Enter")
+                      handlePutKey();
+                    if (e.key === "Escape")
+                      setShowAddKeyForm(false);
+                  }
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handlePutKey, disabled: !newKeyName.trim(), children: "Add Key" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Key" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Size" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Type" })
+              ] }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tbody", { children: keys.map((k, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+                "tr",
+                {
+                  className: `table-row ${selectedKey && selectedKey.keyBase64 === k.keyBase64 ? "selected" : ""}`,
+                  onClick: () => handleKeyClick(k),
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { title: safeAtob(k.keyBase64), children: safeAtob(k.keyBase64).slice(0, 40) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: formatSize(k.valueSize) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: k.isBucket ? "Bucket" : "Value" })
+                  ]
+                },
+                i
+              )) })
+            ] })
           ] }),
           !isLoading && nextAfterKey && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => loadKeys(currentPath, nextAfterKey), children: "Load More..." })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "preview-panel", children: selectedKey && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", { children: [
-            "Selected: ",
-            safeAtob(selectedKey.keyBase64)
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "preview-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", { children: [
+              "Selected: ",
+              safeAtob(selectedKey.keyBase64)
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "key-metadata", children: isWriteMode && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "preview-actions", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+              "button",
+              {
+                onClick: () => {
+                  console.log("[DEBUG] Delete button clicked");
+                  if (selectedKey.isBucket) {
+                    handleDeleteBucket(selectedKey);
+                  } else {
+                    handleDeleteKey(selectedKey);
+                  }
+                },
+                className: "delete-button-improved",
+                title: `Delete ${selectedKey.isBucket ? "bucket" : "key"}`,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { width: "14", height: "14", viewBox: "0 0 16 16", fill: "currentColor", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 1.152l.557 10.056A2 2 0 0 0 5.046 16h5.908a2 2 0 0 0 1.993-1.836l.557-10.056a.58.58 0 0 0-.01-1.152H11ZM4.5 5.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7ZM7.5 5.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7Zm3-1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5Z" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Delete" })
+                ]
+              }
+            ) }) })
           ] }),
           selectedKey.isBucket ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "This is a bucket." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
               "Size: ",
               formatSize(selectedKey.valueSize)
             ] }),
-            preview && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+            preview && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: isEditingValue ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "edit-value-container", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "content-header", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "content-type", children: "Editing Value" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "edit-actions", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleSaveValue, className: "save-button", children: "Save" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleCancelEdit, className: "cancel-button", children: "Cancel" })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "textarea",
+                {
+                  className: "edit-value-textarea",
+                  value: editedValue,
+                  onChange: (e) => setEditedValue(e.target.value),
+                  rows: 10
+                }
+              )
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
               (() => {
                 const { formatted, type } = formatContent(preview.content);
                 return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
@@ -24867,15 +25193,26 @@
                       "Content Type: ",
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: `type-${type}`, children: type.toUpperCase() })
                     ] }),
-                    type !== "binary" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                      "button",
-                      {
-                        className: "copy-button",
-                        onClick: () => copyToClipboard(formatted),
-                        title: "Copy to clipboard",
-                        children: "Copy"
-                      }
-                    )
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "content-actions", children: [
+                      isWriteMode && type !== "binary" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                        "button",
+                        {
+                          className: "edit-button",
+                          onClick: handleEditValue,
+                          title: "Edit value",
+                          children: "Edit"
+                        }
+                      ),
+                      type !== "binary" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                        "button",
+                        {
+                          className: "copy-button",
+                          onClick: () => copyToClipboard(formatted),
+                          title: "Copy to clipboard",
+                          children: "Copy"
+                        }
+                      )
+                    ] })
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("pre", { className: `preview preview-${type}`, children: formatted })
                 ] });
@@ -24886,10 +25223,40 @@
                 ")"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handleSave, children: "Save full value to file" })
-            ] })
+            ] }) })
           ] })
         ] }) })
-      ] })
+      ] }),
+      confirmDelete && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "modal-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "confirmation-dialog", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { children: "Confirm Delete" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
+          "Are you sure you want to delete ",
+          confirmDelete.type,
+          ' "',
+          confirmDelete.name,
+          '"',
+          confirmDelete.type === "bucket" && " and all its contents",
+          "?"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dialog-buttons", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "button",
+            {
+              className: "cancel-button",
+              onClick: handleCancelDelete,
+              children: "Cancel"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "button",
+            {
+              className: "delete-button",
+              onClick: handleConfirmDelete,
+              children: "Delete"
+            }
+          )
+        ] })
+      ] }) })
     ] });
   }
   var root = (0, import_client.createRoot)(document.getElementById("root"));
