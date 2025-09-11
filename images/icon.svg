@@ -1,60 +1,191 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Database with yellow lightning bolt and magnifying glass">
-  <defs>
-    <style>
-      .db-fill { fill: #20262C; }
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 256 256"
+   role="img"
+   aria-label="Database with yellow lightning bolt and magnifying glass"
+   version="1.1"
+   id="svg9"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="../icons/boltdb.png"
+   inkscape:export-xdpi="6"
+   inkscape:export-ydpi="6"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview9"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="false"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="false"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2.4150171"
+     inkscape:cx="91.924817"
+     inkscape:cy="164.18104"
+     inkscape:window-width="2016"
+     inkscape:window-height="1186"
+     inkscape:window-x="1308"
+     inkscape:window-y="163"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg9" />
+  <defs
+     id="defs1">
+    <style
+       id="style1">
+      .db-fill { fill: #2B2B2B; }
       .accent { fill: #FFC928; }
       .glass { fill: #20262C; }
+      .db-stroke { stroke: #666666; stroke-width: 8; stroke-linejoin: miter; stroke-linecap: butt; }
       .stroke { stroke: #0F1214; stroke-width: 8; stroke-linejoin: miter; stroke-linecap: butt; }
       /* tweak stroke width if you need heavier/lighter outlines */
     </style>
   </defs>
-
   <!-- Database (stacked cylinder) -->
-  <g class="stroke db-fill">
+  <g
+     class="db-stroke db-fill"
+     id="g5"
+     style="stroke:#ffffff;stroke-opacity:1">
     <!-- top ellipse -->
-    <ellipse cx="104" cy="56" rx="72" ry="28"/>
+    <ellipse
+       cx="104"
+       cy="56"
+       rx="72"
+       ry="28"
+       id="ellipse1"
+       style="stroke:#ffffff;stroke-opacity:1" />
     <!-- body -->
-    <path d="M32 56v96c0 15.5 32.2 28 72 28s72-12.5 72-28V56" />
+    <path
+       d="M32 56v96c0 15.5 32.2 28 72 28s72-12.5 72-28V56"
+       id="path1"
+       style="stroke:#ffffff;stroke-opacity:1" />
     <!-- top slice line -->
-    <path d="M32 56c0 15.5 32.2 28 72 28s72-12.5 72-28" fill="none"/>
+    <path
+       d="M32 56c0 15.5 32.2 28 72 28s72-12.5 72-28"
+       fill="none"
+       id="path2"
+       style="stroke:#ffffff;stroke-opacity:1" />
     <!-- first slice line (top third) -->
-    <path d="M32 88c0 10.5 32.2 28 72 28s72-12.5 72-28" fill="none"/>
+    <path
+       d="M32 88c0 10.5 32.2 28 72 28s72-12.5 72-28"
+       fill="none"
+       id="path3"
+       style="stroke:#ffffff;stroke-opacity:1" />
     <!-- second slice line (middle third) -->
-    <path d="M32 120c0 10.5 32.2 28 72 28s72-12.5 72-28" fill="none"/>
+    <path
+       d="M32 120c0 10.5 32.2 28 72 28s72-12.5 72-28"
+       fill="none"
+       id="path4"
+       style="stroke:#ffffff;stroke-opacity:1" />
     <!-- bottom ellipse (implied by body; add base line for crisp edge) -->
-    <path d="M32 152c0 15.5 32.2 28 72 28s72-12.5 72-28" fill="none"/>
+    <path
+       d="M32 152c0 15.5 32.2 28 72 28s72-12.5 72-28"
+       fill="none"
+       id="path5"
+       style="stroke:#ffffff;stroke-opacity:1" />
   </g>
-
   <!-- Lightning bolt -->
-  <path class="stroke accent"
-        d="M88 54 l-34 62h28l-18 52 56-74h-28l24-40z"/>
-
+  <path
+     class="accent"
+     d="m 77.230769,56.615385 -34,61.999995 h 28 l -18,52 56.000001,-73.999995 H 81.230769 l 24.000001,-40 z"
+     id="path6" />
   <!-- Magnifying glass -->
-  <defs>
-    <mask id="lensMask">
-      <rect width="256" height="256" fill="white"/>
-      <circle cx="160" cy="140" r="28" fill="black"/>
+  <defs
+     id="defs6">
+    <mask
+       id="lensMask">
+      <rect
+         width="256"
+         height="256"
+         fill="white"
+         id="rect6" />
+      <circle
+         cx="160"
+         cy="140"
+         r="28"
+         fill="black"
+         id="circle6" />
     </mask>
   </defs>
-  <g class="stroke glass">
+  <g
+     class="db-stroke glass"
+     id="g8"
+     transform="translate(-8.304431,8.6644775)"
+     style="stroke:#666666">
     <!-- lens with cutout -->
-    <circle cx="160" cy="140" r="44" mask="url(#lensMask)" />
+    <circle
+       cx="160"
+       cy="140"
+       r="38"
+       mask="url(#lensMask)"
+       id="circle7"
+       style="fill:none;stroke:#666666" />
     <!-- handle -->
-    <path d="M192 172l30 30" stroke-width="12" />
+    <path
+       d="M 186.46154,165.84615 222,202 m -30.53846,-34.15385"
+       stroke-width="12"
+       id="path7"
+       sodipodi:nodetypes="cc"
+       style="stroke:#666666" />
     <!-- inner lens highlight ring -->
-    <circle cx="160" cy="140" r="28" fill="none"/>
+    <ellipse
+       cx="160"
+       cy="140"
+       fill="none"
+       id="circle8"
+       rx="32.615383"
+       ry="31.384615"
+       style="stroke:#666666" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path7"
+       id="use9"
+       transform="matrix(0.85349514,0,0,0.76546988,34.536191,52.212423)"
+       style="stroke:#666666" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path7"
+       id="use9-5"
+       transform="matrix(0.85349514,0,0,0.76546988,41.300813,46.262403)"
+       style="stroke:#666666" />
   </g>
-
   <!-- Optional: mask the bolt “piercing” the DB (keeps edges crisp) -->
-  <mask id="dbMask">
-    <rect width="256" height="256" fill="#fff"/>
-    <g>
-      <ellipse cx="104" cy="56" rx="72" ry="28" fill="#000"/>
-      <path d="M32 56v96c0 15.5 32.2 28 72 28s72-12.5 72-28V56z" fill="#000"/>
+  <mask
+     id="dbMask">
+    <rect
+       width="256"
+       height="256"
+       fill="#fff"
+       id="rect8" />
+    <g
+       id="g9">
+      <ellipse
+         cx="104"
+         cy="56"
+         rx="72"
+         ry="28"
+         fill="#000"
+         id="ellipse8" />
+      <path
+         d="M32 56v96c0 15.5 32.2 28 72 28s72-12.5 72-28V56z"
+         fill="#000"
+         id="path8" />
     </g>
   </mask>
   <!-- Repaint bolt only where it overlaps DB for a clean inset effect -->
-  <path class="accent"
-        d="M88 54 l-34 62h28l-18 52 56-74h-28l24-40z"
-        mask="url(#dbMask)" opacity="0.08"/>
+  <path
+     class="accent"
+     d="M 88,48 54,110 H 82 L 64,162 120,88 H 92 l 24,-40 z"
+     mask="url(#dbMask)"
+     opacity="0.08"
+     id="path9"
+     transform="translate(-10.153846,15.384615)" />
 </svg>

@@ -4,6 +4,15 @@ All notable changes to the "BoltDB Explorer" extension will be documented in thi
 
 The format follows [Keep a Changelog](http://keepachangelog.com/) guidelines.
 
+## [1.0.3] - 2025-09-11
+
+### Changed
+- Updated the icon again
+
+## [1.0.2] - 2025-09-11
+
+### Changed
+- Updated the icon
 
 ## [1.0.0] - 2025-09-09
 
