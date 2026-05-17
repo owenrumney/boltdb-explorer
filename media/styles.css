@@ -197,7 +197,6 @@ button:hover {
 .search-controls {
   position: relative;
   display: flex;
-  gap: 10px;
   align-items: center;
   margin-bottom: 15px;
 }
@@ -297,14 +296,167 @@ button:hover {
   cursor: not-allowed;
 }
 
-.case-sensitive-label {
-  margin-left: 0.5em;
+.cancel-button {
+  background: var(--vscode-errorForeground, #f14c4c);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.cancel-button:hover {
+  background: var(--vscode-errorForeground, #d73a49);
+  opacity: 0.9;
+}
+
+
+.search-controls {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.search-main-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+}
+
+.search-input-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+}
+
+.search-input {
+  flex: 1;
+  height: 26px;
+}
+
+.search-button, .cancel-button {
+  height: 28px;
+  padding: 0 12px;
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: var(--vscode-foreground);
+  justify-content: center;
+}
+
+.search-options-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.exact-match-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
   user-select: none;
+  font-size: 14px;
+  color: var(--vscode-foreground);
+  white-space: nowrap;
+}
+
+.exact-match-label input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.search-type-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--vscode-foreground);
+}
+
+/* Responsive behavior */
+@media (max-width: 500px) {
+  .search-options-row {
+    gap: 12px;
+  }
+  
+  .search-type-label {
+    display: none;
+  }
+}
+
+.search-type-label {
+  font-size: 14px;
+  color: var(--vscode-foreground);
+  margin-right: 5px;
+}
+
+.search-type-option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+}
+
+.search-type-dropdown {
+  background: var(--vscode-dropdown-background, #fff);
+  color: var(--vscode-dropdown-foreground, #222);
+  border: 1px solid var(--vscode-dropdown-border, #ccc);
+  border-radius: 2px;
+  padding: 4px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+}
+
+.search-type-dropdown:focus {
+  border-color: var(--vscode-focusBorder, #007acc);
+}
+
+
+.search-progress {
+  background: var(--vscode-editor-inactiveSelectionBackground, #f3f3f3);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.progress-info {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.progress-info span {
+  color: var(--vscode-foreground);
+  font-weight: 500;
+}
+
+.search-summary {
+  background: var(--vscode-editor-selectionBackground, #e8f4f8);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--vscode-foreground);
+  font-weight: 500;
+}
+
+.keys-progress {
+  background: var(--vscode-editor-inactiveSelectionBackground, #f3f3f3);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  font-size: 11px;
 }
 
 .search-results {

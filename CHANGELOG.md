@@ -4,6 +4,22 @@ All notable changes to the "BoltDB Explorer" extension will be documented in thi
 
 The format follows [Keep a Changelog](http://keepachangelog.com/) guidelines.
 
+## [1.0.5] - 2026-05-17
+
+### Changed
+
+- Bump dependencies
+
+## [1.0.4] - 2025-09-12
+
+### Changed
+- Switched to streaming for listing keys and search
+  - faster database load times
+  - faster results when searching
+  - streaming cancels on the next request
+- Added option to search only for buckets, keys or both
+- Added option to search using an exact term
+
 ## [1.0.3] - 2025-09-11
 
 ### Changed
