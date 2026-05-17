@@ -2,7 +2,7 @@
   "name": "boltdb-explorer",
   "displayName": "BoltDB Explorer",
   "description": "Browse, search, edit and manage Bolt/bbolt DB files directly in VS Code",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "publisher": "owenrumney",
   "author": {
     "name": "Owen Rumney"
