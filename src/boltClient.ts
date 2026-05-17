@@ -77,6 +77,87 @@ export async function listKeys(dbPath: string, bucketPath: string, opts: { prefi
   console.timeEnd(`boltClient-listKeys-${bucketPath || 'root'}`);
   return result;
 }
+
+export function listKeysStreaming(
+  dbPath: string,
+  bucketPath: string,
+  onItem: (item: any) => void,
+  onProgress: (progress: any) => void,
+  onComplete: (complete: any) => void,
+  onError: (error: string) => void,
+  opts: { prefix?: string, limit?: number, afterKey?: string } = {}
+): { cancel: () => void } {
+  const args = ['lsk', '--db', dbPath, '--path', bucketPath, '--stream'];
+  if (opts.prefix) { args.push('--prefix', opts.prefix); }
+  if (opts.limit) { args.push('--limit', String(opts.limit)); }
+  if (opts.afterKey) { args.push('--after-key', opts.afterKey); }
+
+  const bin = getPlatformBinary();
+  console.log('[DEBUG] Streaming listKeys:', bin, args.join(' '));
+  
+  const proc = cp.spawn(bin, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+  let buffer = '';
+
+  proc.stdout.on('data', (data: Buffer) => {
+    buffer += data.toString();
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+    for (const line of lines) {
+      if (line.trim()) {
+        try {
+          const message = JSON.parse(line);
+          switch (message.type) {
+            case 'item':
+              onItem(message.item);
+              break;
+            case 'progress':
+              onProgress(message.progress);
+              break;
+            case 'complete':
+              onComplete(message.complete);
+              break;
+            case 'error':
+              onError(message.error);
+              break;
+          }
+        } catch (e) {
+          console.error('Failed to parse streaming listKeys message:', line, e);
+        }
+      }
+    }
+  });
+
+  proc.stderr.on('data', (data: Buffer) => {
+    console.log('[DEBUG] Streaming listKeys stderr:', data.toString());
+  });
+
+  proc.on('close', (code) => {
+    console.log(`[DEBUG] Streaming listKeys finished with code ${code}`);
+    if (code !== 0 && code !== null) {
+      onError(`ListKeys process exited with code ${code}`);
+    }
+  });
+
+  proc.on('error', (err) => {
+    console.error('[DEBUG] Streaming listKeys error:', err);
+    onError(err.message);
+  });
+
+  return {
+    cancel: () => {
+      console.log('[DEBUG] Cancelling listKeys process:', proc.pid);
+      proc.kill('SIGTERM');
+      // Force kill if still running after 1 second
+      setTimeout(() => {
+        if (!proc.killed) {
+          console.log('[DEBUG] Force killing listKeys process');
+          proc.kill('SIGKILL');
+        }
+      }, 1000);
+    }
+  };
+}
 export async function readHead(dbPath: string, bucketPath: string, keyBase64: string, n = 65536) {
   return execJson(['get', '--db', dbPath, '--path', bucketPath, '--key', keyBase64, '--mode', 'head', '--n', String(n)]);
 }
@@ -89,12 +170,109 @@ export async function exportBucket(dbPath: string, bucketPath: string, outPath: 
   if (prefix) { args.push('--prefix', prefix); }
   return execJson(args);
 }
-export async function search(dbPath: string, query: string, limit: number = 100, caseSensitive: boolean = false) {
+export async function search(dbPath: string, query: string, limit: number = 100, caseSensitive: boolean = false, searchType: string = 'both') {
   const args = ['search', '-db', dbPath, '-query', query, '-limit', limit.toString()];
   if (caseSensitive) {
     args.push('-case-sensitive');
   }
+  if (searchType !== 'both') {
+    args.push('-type', searchType);
+  }
   return execJson(args);
+}
+
+export function searchStreaming(
+  dbPath: string, 
+  query: string, 
+  onResult: (item: any) => void,
+  onProgress: (progress: any) => void,
+  onComplete: (summary: any) => void,
+  onError: (error: string) => void,
+  limit: number = 100, 
+  caseSensitive: boolean = false, 
+  searchType: string = 'both',
+  maxDepth: number = -1,
+  exactMatch: boolean = false
+): { cancel: () => void } {
+  const args = ['search', '-db', dbPath, '-query', query, '-limit', limit.toString(), '-stream'];
+  if (caseSensitive) {
+    args.push('-case-sensitive');
+  }
+  if (searchType !== 'both') {
+    args.push('-type', searchType);
+  }
+  if (maxDepth >= 0) {
+    args.push('-max-depth', maxDepth.toString());
+  }
+  if (exactMatch) {
+    args.push('-exact-match');
+  }
+
+  const bin = getPlatformBinary();
+  console.log('[DEBUG] Streaming search:', bin, args.join(' '));
+  
+  const proc = cp.spawn(bin, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+  let buffer = '';
+
+  proc.stdout.on('data', (data: Buffer) => {
+    buffer += data.toString();
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+    for (const line of lines) {
+      if (line.trim()) {
+        try {
+          const message = JSON.parse(line);
+          switch (message.type) {
+            case 'result':
+              onResult(message.item);
+              break;
+            case 'progress':
+              onProgress(message.progress);
+              break;
+            case 'complete':
+              onComplete(message.summary);
+              break;
+            case 'error':
+              onError(message.error);
+              break;
+          }
+        } catch (e) {
+          console.error('Failed to parse streaming message:', line, e);
+        }
+      }
+    }
+  });
+
+  proc.stderr.on('data', (data: Buffer) => {
+    console.log('[DEBUG] Streaming search stderr:', data.toString());
+  });
+
+  proc.on('close', (code) => {
+    console.log(`[DEBUG] Streaming search finished with code ${code}`);
+    if (code !== 0 && code !== null) {
+      onError(`Search process exited with code ${code}`);
+    }
+  });
+
+  proc.on('error', (err) => {
+    console.error('[DEBUG] Streaming search error:', err);
+    onError(err.message);
+  });
+
+  return {
+    cancel: () => {
+      console.log('[DEBUG] Cancelling search process:', proc.pid);
+      proc.kill('SIGTERM');
+      // Force kill if still running after 1 second
+      setTimeout(() => {
+        if (!proc.killed) {
+          console.log('[DEBUG] Force killing search process');
+          proc.kill('SIGKILL');
+        }
+      }, 1000);
+    }
+  };
 }
 
 // Write operations

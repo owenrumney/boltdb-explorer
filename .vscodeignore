@@ -3,6 +3,13 @@
 out/**
 node_modules/**
 src/**
+.claude/**
+.github/**
+.scratch
+.scratch/**
+go/**
+scripts/**
+test.db
 .gitignore
 .yarnrc
 webpack.config.js

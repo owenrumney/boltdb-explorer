@@ -64,13 +64,18 @@ function App() {
   const [currentPath, setCurrentPath] = useState('');
   const [keys, setKeys] = useState<Key[]>([]);
   const [nextAfterKey, setNextAfterKey] = useState<string | undefined>();
+  const [keysProgress, setKeysProgress] = useState<any>(null);
+  const [isLoadingKeys, setIsLoadingKeys] = useState<boolean>(false);
   const [selectedKey, setSelectedKey] = useState<Key | null>(null);
   const [preview, setPreview] = useState<{ content: string; totalSize: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [searchCaseSensitive, setSearchCaseSensitive] = useState<boolean>(false);
+  const [searchType, setSearchType] = useState<string>('both');
+  const [searchExactMatch, setSearchExactMatch] = useState(false);
+  const [searchProgress, setSearchProgress] = useState<any>(null);
+  const [searchSummary, setSearchSummary] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isWriteMode, setIsWriteMode] = useState<boolean>(false);
   const [showAddBucketForm, setShowAddBucketForm] = useState<boolean>(false);
@@ -86,31 +91,32 @@ function App() {
   function post(msg: any) { vscode.postMessage(msg); }
 
   function loadKeys(bucketPath: string, afterKey?: string) {
-    console.log('[DEBUG] loadKeys called with bucketPath:', bucketPath, 'afterKey:', afterKey);
     console.time(`loadKeys-${bucketPath || 'root'}`);
     setIsLoading(true);
+    setIsLoadingKeys(true);
     setError(null); // Clear any previous errors
+    setKeysProgress(null);
     
     // Normalize bucket path to avoid issues with empty strings vs root paths
     const normalizedPath = bucketPath || '';
     
     // Make sure currentPath is updated consistently
     if (normalizedPath !== currentPath) {
-      console.log('[DEBUG] Updating currentPath from:', currentPath, 'to:', normalizedPath);
       setCurrentPath(normalizedPath);
     }
     
-    // For debugging breadcrumb issues
-    if (normalizedPath) {
-      console.log('[DEBUG] Current path parts:', normalizedPath.split('/'));
+    // Clear keys and pagination state if this is a new load (not pagination)
+    if (!afterKey) {
+      setKeys([]);
+      setNextAfterKey(undefined);
     }
     
-    post({ type: 'listKeys', bucketPath: normalizedPath, afterKey });
+    // Always use streaming for keys
+    post({ type: 'listKeys', bucketPath: normalizedPath, afterKey, streaming: true });
     
     // Safety timeout - if no response after 10 seconds, stop loading
     setTimeout(() => {
       setIsLoading(false);
-      console.log('[DEBUG] Loading timeout - forced stop');
       console.timeEnd(`loadKeys-${bucketPath || 'root'}`);
     }, 10000);
   }
@@ -118,10 +124,30 @@ function App() {
   function handleSearch() {
     if (searchQuery.trim() === '') {
       setSearchResults([]);
+      setSearchProgress(null);
+      setSearchSummary(null);
       return;
     }
     setIsSearching(true);
-    post({ type: 'search', query: searchQuery.trim(), limit: 100, caseSensitive: searchCaseSensitive });
+    setSearchResults([]);
+    setSearchProgress(null);
+    setSearchSummary(null);
+    
+    post({ 
+      type: 'search', 
+      query: searchQuery.trim(), 
+      limit: 1000, // Higher limit for streaming
+      caseSensitive: false, // Always case-insensitive
+      searchType,
+      exactMatch: searchExactMatch,
+      streaming: true, // Always use streaming
+      maxDepth: 50 // Reasonable depth limit for large DBs
+    });
+  }
+
+  function handleCancelSearch() {
+    setIsSearching(false);
+    post({ type: 'cancelSearch' });
   }
 
   function handleCreateBucket() {
@@ -268,18 +294,28 @@ function App() {
   >(null);
 
   function navigateToSearchResult(result: SearchItem) {
+    // Cancel any ongoing search when user selects a result
+    if (isSearching) {
+      handleCancelSearch();
+    }
+    
     const pathParts = result.path;
-    const bucketPath = pathParts.join('/');
-    console.log('[DEBUG] Search result selected:', {
-      bucketPath,
-      keyBase64: result.keyBase64,
-      valueSize: result.valueSize,
-      path: result.path,
-      isBucket: result.isBucket
-    });
+    let bucketPath = pathParts.join('/');
+    
+    // If this is a bucket result, we want to navigate INTO the bucket
+    if (result.isBucket) {
+      const bucketName = safeBase64ToUtf8(result.keyBase64);
+      bucketPath = pathParts.length === 0 ? bucketName : `${bucketPath}/${bucketName}`;
+    }
+    
+    
     setCurrentPath(bucketPath);
     setPreview(null);
     setSearchResults([]); // Clear search results but keep query
+    setSearchProgress(null);
+    setSearchSummary(null);
+    setNextAfterKey(undefined); // Clear pagination state for fresh bucket load
+    
     if (!result.isBucket) {
       pendingHighlightRef.current = { bucketPath, keyBase64: result.keyBase64, valueSize: result.valueSize, loadedKeys: [] };
     } else {
@@ -295,13 +331,6 @@ function App() {
     const listener = (event: any) => {
       const msg = event.data;
       
-      // Add more extensive logging to help debug navigation issues
-      console.log(`[DEBUG] Message received: ${msg.type}`, { 
-        messageType: msg.type,
-        currentPath,
-        messageData: msg
-      });
-      
       // Enhanced debugging for bucket operations
       if (msg.type === 'bucketCreated' || msg.type === 'bucketDeleted') {
         console.log('[DEBUG] Bucket operation details:', {
@@ -311,22 +340,13 @@ function App() {
         });
       }
       if (msg.type === 'keys') {
+        // Legacy batch keys response - should not happen with streaming
         const res = msg as KeysResponse;
         const responseBucketPath = msg.bucketPath || '';
-        
-        console.log('[DEBUG] Keys response received with detailed info:', {
-          responseBucketPath,
-          currentPath,
-          keysCount: res.items?.length || 0,
-          afterKey: msg.afterKey
-        });
         console.timeEnd(`loadKeys-${responseBucketPath || 'root'}`);
         
         // Ensure currentPath matches the bucket path we just loaded
-        // This fixes inconsistency between breadcrumbs and content
         if (currentPath !== responseBucketPath) {
-          console.log('[DEBUG] Fixing path mismatch - updating currentPath from', 
-                      currentPath, 'to', responseBucketPath);
           setCurrentPath(responseBucketPath);
         }
         
@@ -337,21 +357,12 @@ function App() {
         // If we have a pending highlight/preview, try to find the key, and auto-page if needed
         const pending = pendingHighlightRef.current;
         if (pending) {
-          console.log('[DEBUG] Looking for keyBase64:', pending.keyBase64, 'in loaded keys.');
-          console.log('[DEBUG] Decoded pending.keyBase64:', safeAtob(pending.keyBase64));
-          console.log('[DEBUG] Number of keys loaded:', res.items.length);
-          
-          // Log all loaded keys to help with debugging
-          res.items.forEach((k, idx) => {
-            console.log(`[DEBUG] Page key[${idx}]:`, k.keyBase64, '| Decoded:', safeAtob(k.keyBase64));
-          });
           
           // Try to find the key in the current page
           const foundInPage = res.items.find(k => k.keyBase64 === pending.keyBase64);
           
           if (foundInPage) {
             // We found the key we're looking for!
-            console.log('[DEBUG] Found key to select:', safeAtob(foundInPage.keyBase64));
             
             // Set the selected key (clear first to ensure UI updates properly)
             setSelectedKey(null);
@@ -366,12 +377,10 @@ function App() {
             }, 10);
           } else if (res.nextAfterKey) {
             // Not found on this page, load the next page
-            console.log('[DEBUG] Key not found in this page, paging for more... nextAfterKey:', res.nextAfterKey);
             pendingHighlightRef.current = pending;
             loadKeys(msg.bucketPath || '', res.nextAfterKey);
           } else {
             // We've checked all pages and didn't find the key
-            console.log('[DEBUG] Key not found after paging all pages:', safeAtob(pending.keyBase64));
             
             // As a fallback for newly created keys, create a synthetic key object
             const syntheticKey: Key = {
@@ -380,7 +389,6 @@ function App() {
               isBucket: false
             };
             
-            console.log('[DEBUG] Using synthetic key as fallback:', safeAtob(syntheticKey.keyBase64));
             setSelectedKey(syntheticKey);
             post({ type: 'readHead', bucketPath: pending.bucketPath, keyBase64: pending.keyBase64 });
             pendingHighlightRef.current = null;
@@ -389,7 +397,6 @@ function App() {
       } else if (msg.type === 'head') {
         const res = msg as HeadResponse;
         const content = safeBase64ToUtf8(res.valueHeadBase64);
-        console.log('[DEBUG] Preview loaded:', content.slice(0, 100));
         
         // If we have a selected key, update its valueSize property with the actual size
         if (selectedKey && !selectedKey.isBucket) {
@@ -401,12 +408,50 @@ function App() {
         
         setPreview({ content, totalSize: res.totalSize });
       } else if (msg.type === 'error') {
-        console.log('[DEBUG] Error received:', msg.message);
         setError(msg.message);
         setIsLoading(false);
       } else if (msg.type === 'searchResults') {
+        // Traditional batch search results
         setSearchResults(msg.items || []);
         setIsSearching(false);
+        setSearchProgress(null);
+      } else if (msg.type === 'searchResult') {
+        // Streaming search result - add single item
+        setSearchResults(prev => [...prev, msg.item]);
+      } else if (msg.type === 'searchProgress') {
+        // Streaming search progress update
+        setSearchProgress(msg.progress);
+      } else if (msg.type === 'searchComplete') {
+        // Streaming search completed
+        setIsSearching(false);
+        setSearchSummary(msg.summary);
+        setSearchProgress(null);
+      } else if (msg.type === 'searchError') {
+        // Streaming search error
+        setIsSearching(false);
+        setError(`Search error: ${msg.error}`);
+        setSearchProgress(null);
+      } else if (msg.type === 'keyItem') {
+        // Streaming keys - add single item
+        // Remove loading spinner on first item
+        setIsLoading(false);
+        setKeys(prev => [...prev, msg.item]);
+      } else if (msg.type === 'keyProgress') {
+        // Streaming keys progress update
+        setKeysProgress(msg.progress);
+      } else if (msg.type === 'keyComplete') {
+        // Streaming keys completed
+        setIsLoadingKeys(false);
+        // setIsLoading(false); // Already set on first keyItem
+        setKeysProgress(null);
+        setNextAfterKey(msg.complete.nextAfterKey);
+        console.timeEnd(`loadKeys-${msg.bucketPath || 'root'}`);
+      } else if (msg.type === 'keyError') {
+        // Streaming keys error
+        setIsLoadingKeys(false);
+        setIsLoading(false);
+        setError(`Keys loading error: ${msg.error}`);
+        setKeysProgress(null);
       } else if (msg.type === 'bucketCreated') {
         // Extract the new bucket path from the message
         const newBucketPath = msg.bucketPath;
@@ -613,11 +658,6 @@ function App() {
     return (size / 1024 / 1024).toFixed(1) + ' MB';
   }
 
-  useEffect(() => {
-    if (selectedKey) {
-      console.log('[DEBUG] Rendering preview panel for selectedKey:', safeAtob(selectedKey.keyBase64));
-    }
-  }, [selectedKey]);
 
   return (
     <div className="app">
@@ -643,12 +683,6 @@ function App() {
             const pathParts = arr.slice(0, i + 1);
             const pathUpToHere = pathParts.join('/');
             
-            // Add debug logging to help diagnose breadcrumb issues
-            console.log(`[DEBUG] Breadcrumb part ${i}:`, {
-              part,
-              pathUpToHere,
-              fullCurrentPath: currentPath
-            });
             
             return (
               <span key={i}>
@@ -657,6 +691,7 @@ function App() {
                   setCurrentPath(pathUpToHere);
                   setSelectedKey(null);
                   setPreview(null);
+                  setNextAfterKey(undefined); // Clear pagination for fresh load
                   loadKeys(pathUpToHere);
                 }}>{part}</button>
               </span>
@@ -667,6 +702,7 @@ function App() {
 
       <div className="search-section">
         <div className="search-controls">
+          <div className="search-main-row">
             <div className="search-input-container">
               <input
                 ref={searchInputRef as any}
@@ -702,21 +738,59 @@ function App() {
               )}
             </div>
             <button 
-              onClick={handleSearch} 
-              disabled={isSearching} 
-              className="search-button"
+              onClick={isSearching ? handleCancelSearch : handleSearch} 
+              className={isSearching ? "cancel-button" : "search-button"}
             >
-              {isSearching ? 'Searching...' : 'Search'}
+              {isSearching ? '⏹ Cancel' : '🔍 Search'}
             </button>
-          <label className="case-sensitive-label">
-            <input
-              type="checkbox"
-              checked={searchCaseSensitive}
-              onChange={(e) => setSearchCaseSensitive(e.target.checked)}
-            />
-            Case sensitive
-          </label>
+          </div>
+          <div className="search-options-row">
+            <label className="exact-match-label">
+              <input
+                type="checkbox"
+                checked={searchExactMatch}
+                onChange={(e) => setSearchExactMatch(e.target.checked)}
+              />
+              <span>Exact match</span>
+            </label>
+            <div className="search-type-controls">
+              <span className="search-type-label">Type:</span>
+              <select
+                className="search-type-dropdown"
+                value={searchType}
+                onChange={(e) => setSearchType(e.target.value)}
+              >
+                <option value="both">Both</option>
+                <option value="buckets">Buckets only</option>
+                <option value="keys">Keys only</option>
+              </select>
+            </div>
+          </div>
         </div>
+
+        {/* Search Progress - only show if we have meaningful progress (found > 0 or elapsed > 10ms) */}
+        {isSearching && searchProgress && (
+          searchProgress.found > 0 || 
+          (searchProgress.elapsed && !searchProgress.elapsed.includes('µs') && !searchProgress.elapsed.includes('ns'))
+        ) && (
+          <div className="search-progress">
+            <div className="progress-info">
+              <span>Found: {searchProgress.found}</span>
+              <span>Depth: {searchProgress.depth}</span>
+              <span>Time: {searchProgress.elapsed}</span>
+              {searchProgress.currentPath.length > 0 && (
+                <span>Path: {searchProgress.currentPath.join('/')}</span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Search Summary - only show when search is complete */}
+        {!isSearching && searchSummary && (
+          <div className="search-summary">
+            Search completed: {searchSummary.totalFound} results found in {searchSummary.elapsed}
+          </div>
+        )}
 
         {searchResults.length > 0 && (
           <div className="search-results">
@@ -813,6 +887,18 @@ function App() {
                   <button onClick={handlePutKey} disabled={!newKeyName.trim()}>
                     Add Key
                   </button>
+                </div>
+              )}
+
+              {/* Keys Progress - only show if we have meaningful progress */}
+              {isLoadingKeys && keysProgress && (
+                keysProgress.loaded > 0 || parseFloat(keysProgress.elapsed) > 10
+              ) && (
+                <div className="keys-progress">
+                  <div className="progress-info">
+                    <span>Loading: {keysProgress.loaded} keys</span>
+                    <span>Time: {keysProgress.elapsed}</span>
+                  </div>
                 </div>
               )}
               

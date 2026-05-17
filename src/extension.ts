@@ -86,20 +86,54 @@ class BoltDBEditorProvider implements vscode.CustomReadonlyEditorProvider<vscode
           console.log(`[DEBUG] Extension received listKeys request:`, { 
             bucketPath: msg.bucketPath, 
             afterKey: msg.afterKey,
+            streaming: msg.streaming,
             bucketPathLength: msg.bucketPath?.length || 0,
             bucketPathEmpty: msg.bucketPath === '',
             bucketPathUndefined: msg.bucketPath === undefined
           });
-          console.time(`extension-listKeys-${msg.bucketPath || 'root'}`);
-          const res = await bolt.listKeys(dbPath, msg.bucketPath, { afterKey: msg.afterKey });
-          console.timeEnd(`extension-listKeys-${msg.bucketPath || 'root'}`);
-          // Include the bucketPath in the response to ensure UI consistency
-          post({ 
-            type: 'keys', 
-            bucketPath: msg.bucketPath,
-            ...res, 
-            afterKey: msg.afterKey 
-          });
+          
+          // Cancel any existing listKeys process
+          if ((webviewPanel as any).currentListKeysHandle) {
+            console.log('[DEBUG] Cancelling existing listKeys process');
+            (webviewPanel as any).currentListKeysHandle.cancel();
+            (webviewPanel as any).currentListKeysHandle = null;
+          }
+          
+          if (msg.streaming) {
+            // Use streaming listKeys
+            const listKeysHandle = bolt.listKeysStreaming(
+              dbPath,
+              msg.bucketPath,
+              (item) => post({ type: 'keyItem', item, bucketPath: msg.bucketPath }),
+              (progress) => post({ type: 'keyProgress', progress, bucketPath: msg.bucketPath }),
+              (complete) => post({ type: 'keyComplete', complete, bucketPath: msg.bucketPath }),
+              (error) => post({ type: 'keyError', error, bucketPath: msg.bucketPath }),
+              { afterKey: msg.afterKey }
+            );
+            // Store the handle for potential cancellation
+            (webviewPanel as any).currentListKeysHandle = listKeysHandle;
+          } else {
+            // Use traditional batch listKeys
+            console.time(`extension-listKeys-${msg.bucketPath || 'root'}`);
+            const res = await bolt.listKeys(dbPath, msg.bucketPath, { afterKey: msg.afterKey });
+            console.timeEnd(`extension-listKeys-${msg.bucketPath || 'root'}`);
+            // Include the bucketPath in the response to ensure UI consistency
+            post({ 
+              type: 'keys', 
+              bucketPath: msg.bucketPath,
+              ...res, 
+              afterKey: msg.afterKey 
+            });
+          }
+        } else if (msg.type === 'cancelListKeys') {
+          console.log('[DEBUG] Extension received cancelListKeys message');
+          if ((webviewPanel as any).currentListKeysHandle) {
+            console.log('[DEBUG] Cancelling current listKeys handle');
+            (webviewPanel as any).currentListKeysHandle.cancel();
+            (webviewPanel as any).currentListKeysHandle = null;
+          } else {
+            console.log('[DEBUG] No current listKeys handle to cancel');
+          }
         } else if (msg.type === 'readHead') {
           const res = await bolt.readHead(dbPath, msg.bucketPath, msg.keyBase64);
           post({ type: 'head', ...res });
@@ -112,8 +146,37 @@ class BoltDBEditorProvider implements vscode.CustomReadonlyEditorProvider<vscode
           const res = await bolt.listBuckets(dbPath, msg.bucketPath);
           post({ type: 'buckets', ...res });
         } else if (msg.type === 'search') {
-          const res = await bolt.search(dbPath, msg.query, msg.limit, msg.caseSensitive);
-          post({ type: 'searchResults', ...res });
+          if (msg.streaming) {
+            // Use streaming search
+            const searchHandle = bolt.searchStreaming(
+              dbPath,
+              msg.query,
+              (item) => post({ type: 'searchResult', item }),
+              (progress) => post({ type: 'searchProgress', progress }),
+              (summary) => post({ type: 'searchComplete', summary }),
+              (error) => post({ type: 'searchError', error }),
+              msg.limit,
+              msg.caseSensitive,
+              msg.searchType,
+              msg.maxDepth,
+              msg.exactMatch
+            );
+            // Store the handle for potential cancellation
+            (webviewPanel as any).currentSearchHandle = searchHandle;
+          } else {
+            // Use traditional batch search
+            const res = await bolt.search(dbPath, msg.query, msg.limit, msg.caseSensitive, msg.searchType);
+            post({ type: 'searchResults', ...res });
+          }
+        } else if (msg.type === 'cancelSearch') {
+          console.log('[DEBUG] Extension received cancelSearch message');
+          if ((webviewPanel as any).currentSearchHandle) {
+            console.log('[DEBUG] Cancelling current search handle');
+            (webviewPanel as any).currentSearchHandle.cancel();
+            (webviewPanel as any).currentSearchHandle = null;
+          } else {
+            console.log('[DEBUG] No current search handle to cancel');
+          }
         } else if (msg.type === 'createBucket') {
           await bolt.createBucket(dbPath, msg.bucketPath);
           // Ensure we send back the full path of the created bucket

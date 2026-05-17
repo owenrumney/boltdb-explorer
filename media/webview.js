@@ -37,19 +37,19 @@
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
           var ReactVersion = "18.3.1";
-          var REACT_ELEMENT_TYPE = Symbol.for("react.element");
-          var REACT_PORTAL_TYPE = Symbol.for("react.portal");
-          var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
-          var REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode");
-          var REACT_PROFILER_TYPE = Symbol.for("react.profiler");
-          var REACT_PROVIDER_TYPE = Symbol.for("react.provider");
-          var REACT_CONTEXT_TYPE = Symbol.for("react.context");
-          var REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref");
-          var REACT_SUSPENSE_TYPE = Symbol.for("react.suspense");
-          var REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list");
-          var REACT_MEMO_TYPE = Symbol.for("react.memo");
-          var REACT_LAZY_TYPE = Symbol.for("react.lazy");
-          var REACT_OFFSCREEN_TYPE = Symbol.for("react.offscreen");
+          var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element");
+          var REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal");
+          var REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment");
+          var REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode");
+          var REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler");
+          var REACT_PROVIDER_TYPE = /* @__PURE__ */ Symbol.for("react.provider");
+          var REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context");
+          var REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref");
+          var REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense");
+          var REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list");
+          var REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo");
+          var REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+          var REACT_OFFSCREEN_TYPE = /* @__PURE__ */ Symbol.for("react.offscreen");
           var MAYBE_ITERATOR_SYMBOL = Symbol.iterator;
           var FAUX_ITERATOR_SYMBOL = "@@iterator";
           function getIteratorFn(maybeIterable) {
@@ -1013,7 +1013,7 @@
           }
           var REACT_MODULE_REFERENCE;
           {
-            REACT_MODULE_REFERENCE = Symbol.for("react.module.reference");
+            REACT_MODULE_REFERENCE = /* @__PURE__ */ Symbol.for("react.module.reference");
           }
           function isValidElementType(type) {
             if (typeof type === "string" || typeof type === "function") {
@@ -2606,6 +2606,7 @@
             }
             switch (typeof value) {
               case "function":
+              // $FlowIssue symbol is perfectly valid here
               case "symbol":
                 return true;
               case "boolean": {
@@ -3178,24 +3179,24 @@
               }
             }
           }
-          var REACT_ELEMENT_TYPE = Symbol.for("react.element");
-          var REACT_PORTAL_TYPE = Symbol.for("react.portal");
-          var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
-          var REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode");
-          var REACT_PROFILER_TYPE = Symbol.for("react.profiler");
-          var REACT_PROVIDER_TYPE = Symbol.for("react.provider");
-          var REACT_CONTEXT_TYPE = Symbol.for("react.context");
-          var REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref");
-          var REACT_SUSPENSE_TYPE = Symbol.for("react.suspense");
-          var REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list");
-          var REACT_MEMO_TYPE = Symbol.for("react.memo");
-          var REACT_LAZY_TYPE = Symbol.for("react.lazy");
-          var REACT_SCOPE_TYPE = Symbol.for("react.scope");
-          var REACT_DEBUG_TRACING_MODE_TYPE = Symbol.for("react.debug_trace_mode");
-          var REACT_OFFSCREEN_TYPE = Symbol.for("react.offscreen");
-          var REACT_LEGACY_HIDDEN_TYPE = Symbol.for("react.legacy_hidden");
-          var REACT_CACHE_TYPE = Symbol.for("react.cache");
-          var REACT_TRACING_MARKER_TYPE = Symbol.for("react.tracing_marker");
+          var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element");
+          var REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal");
+          var REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment");
+          var REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode");
+          var REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler");
+          var REACT_PROVIDER_TYPE = /* @__PURE__ */ Symbol.for("react.provider");
+          var REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context");
+          var REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref");
+          var REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense");
+          var REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list");
+          var REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo");
+          var REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+          var REACT_SCOPE_TYPE = /* @__PURE__ */ Symbol.for("react.scope");
+          var REACT_DEBUG_TRACING_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.debug_trace_mode");
+          var REACT_OFFSCREEN_TYPE = /* @__PURE__ */ Symbol.for("react.offscreen");
+          var REACT_LEGACY_HIDDEN_TYPE = /* @__PURE__ */ Symbol.for("react.legacy_hidden");
+          var REACT_CACHE_TYPE = /* @__PURE__ */ Symbol.for("react.cache");
+          var REACT_TRACING_MARKER_TYPE = /* @__PURE__ */ Symbol.for("react.tracing_marker");
           var MAYBE_ITERATOR_SYMBOL = Symbol.iterator;
           var FAUX_ITERATOR_SYMBOL = "@@iterator";
           function getIteratorFn(maybeIterable) {
@@ -3620,6 +3621,7 @@
                 return "SuspenseList";
               case TracingMarkerComponent:
                 return "TracingMarker";
+              // The display name for this tags come from the user-provided type:
               case ClassComponent:
               case FunctionComponent:
               case IncompleteClassComponent:
@@ -4617,6 +4619,10 @@
               return typeof props.is === "string";
             }
             switch (tagName) {
+              // These are reserved SVG and MathML elements.
+              // We don't mind this list too much because we expect it to never grow.
+              // The alternative is to track the namespace in a few places which is convoluted.
+              // https://w3c.github.io/webcomponents/spec/custom/#custom-elements-core-concepts
               case "annotation-xml":
               case "color-profile":
               case "font-face":
@@ -7446,6 +7452,7 @@
           }
           function getEventPriority(domEventName) {
             switch (domEventName) {
+              // Used by SimpleEventPlugin:
               case "cancel":
               case "click":
               case "close":
@@ -7481,14 +7488,20 @@
               case "touchend":
               case "touchstart":
               case "volumechange":
+              // Used by polyfills:
+              // eslint-disable-next-line no-fallthrough
               case "change":
               case "selectionchange":
               case "textInput":
               case "compositionstart":
               case "compositionend":
               case "compositionupdate":
+              // Only enableCreateEventHandleAPI:
+              // eslint-disable-next-line no-fallthrough
               case "beforeblur":
               case "afterblur":
+              // Not used by React but could be by user code:
+              // eslint-disable-next-line no-fallthrough
               case "beforeinput":
               case "blur":
               case "fullscreenchange":
@@ -7513,6 +7526,8 @@
               case "toggle":
               case "touchmove":
               case "wheel":
+              // Not used by React but could be by user code:
+              // eslint-disable-next-line no-fallthrough
               case "mouseenter":
               case "mouseleave":
               case "pointerenter":
@@ -7744,8 +7759,7 @@
             button: 0,
             buttons: 0,
             relatedTarget: function(event) {
-              if (event.relatedTarget === void 0)
-                return event.fromElement === event.srcElement ? event.toElement : event.fromElement;
+              if (event.relatedTarget === void 0) return event.fromElement === event.srcElement ? event.toElement : event.fromElement;
               return event.relatedTarget;
             },
             movementX: function(event) {
@@ -8461,43 +8475,42 @@
             var indexWithinFocus = 0;
             var node = outerNode;
             var parentNode = null;
-            outer:
+            outer: while (true) {
+              var next = null;
               while (true) {
-                var next = null;
-                while (true) {
-                  if (node === anchorNode && (anchorOffset === 0 || node.nodeType === TEXT_NODE)) {
-                    start = length + anchorOffset;
-                  }
-                  if (node === focusNode && (focusOffset === 0 || node.nodeType === TEXT_NODE)) {
-                    end = length + focusOffset;
-                  }
-                  if (node.nodeType === TEXT_NODE) {
-                    length += node.nodeValue.length;
-                  }
-                  if ((next = node.firstChild) === null) {
-                    break;
-                  }
-                  parentNode = node;
-                  node = next;
+                if (node === anchorNode && (anchorOffset === 0 || node.nodeType === TEXT_NODE)) {
+                  start = length + anchorOffset;
                 }
-                while (true) {
-                  if (node === outerNode) {
-                    break outer;
-                  }
-                  if (parentNode === anchorNode && ++indexWithinAnchor === anchorOffset) {
-                    start = length;
-                  }
-                  if (parentNode === focusNode && ++indexWithinFocus === focusOffset) {
-                    end = length;
-                  }
-                  if ((next = node.nextSibling) !== null) {
-                    break;
-                  }
-                  node = parentNode;
-                  parentNode = node.parentNode;
+                if (node === focusNode && (focusOffset === 0 || node.nodeType === TEXT_NODE)) {
+                  end = length + focusOffset;
                 }
+                if (node.nodeType === TEXT_NODE) {
+                  length += node.nodeValue.length;
+                }
+                if ((next = node.firstChild) === null) {
+                  break;
+                }
+                parentNode = node;
                 node = next;
               }
+              while (true) {
+                if (node === outerNode) {
+                  break outer;
+                }
+                if (parentNode === anchorNode && ++indexWithinAnchor === anchorOffset) {
+                  start = length;
+                }
+                if (parentNode === focusNode && ++indexWithinFocus === focusOffset) {
+                  end = length;
+                }
+                if ((next = node.nextSibling) !== null) {
+                  break;
+                }
+                node = parentNode;
+                parentNode = node.parentNode;
+              }
+              node = next;
+            }
             if (start === -1 || end === -1) {
               return null;
             }
@@ -8700,6 +8713,7 @@
           function extractEvents$3(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags, targetContainer) {
             var targetNode = targetInst ? getNodeFromInstance(targetInst) : window;
             switch (domEventName) {
+              // Track the input node that has focus.
               case "focusin":
                 if (isTextInputElement(targetNode) || targetNode.contentEditable === "true") {
                   activeElement$1 = targetNode;
@@ -8712,6 +8726,8 @@
                 activeElementInst$1 = null;
                 lastSelection = null;
                 break;
+              // Don't fire the event while the user is dragging. This matches the
+              // semantics of the native select event.
               case "mousedown":
                 mouseDown = true;
                 break;
@@ -8721,10 +8737,20 @@
                 mouseDown = false;
                 constructSelectEvent(dispatchQueue, nativeEvent, nativeEventTarget);
                 break;
+              // Chrome and IE fire non-standard event when selection is changed (and
+              // sometimes when it hasn't). IE's event fires out of order with respect
+              // to key and input events on deletion, so we discard it.
+              //
+              // Firefox doesn't support selectionchange, so check selection status
+              // after each key entry. The selection changes after keydown and before
+              // keyup, but we check on keydown as well in the case of holding down a
+              // key, when multiple keydown events are fired but only one keyup is.
+              // This is also our approach for IE handling, for the reason above.
               case "selectionchange":
                 if (skipSelectionChangeEvent) {
                   break;
                 }
+              // falls through
               case "keydown":
               case "keyup":
                 constructSelectEvent(dispatchQueue, nativeEvent, nativeEventTarget);
@@ -8807,6 +8833,7 @@
                 if (getEventCharCode(nativeEvent) === 0) {
                   return;
                 }
+              /* falls through */
               case "keydown":
               case "keyup":
                 SyntheticEventCtor = SyntheticKeyboardEvent;
@@ -8827,11 +8854,14 @@
                 if (nativeEvent.button === 2) {
                   return;
                 }
+              /* falls through */
               case "auxclick":
               case "dblclick":
               case "mousedown":
               case "mousemove":
               case "mouseup":
+              // TODO: Disabled elements should not respond to mouse events
+              /* falls through */
               case "mouseout":
               case "mouseover":
               case "contextmenu":
@@ -9039,45 +9069,44 @@
               var targetContainerNode = targetContainer;
               if (targetInst !== null) {
                 var node = targetInst;
-                mainLoop:
-                  while (true) {
-                    if (node === null) {
-                      return;
-                    }
-                    var nodeTag = node.tag;
-                    if (nodeTag === HostRoot || nodeTag === HostPortal) {
-                      var container = node.stateNode.containerInfo;
-                      if (isMatchingRootContainer(container, targetContainerNode)) {
-                        break;
-                      }
-                      if (nodeTag === HostPortal) {
-                        var grandNode = node.return;
-                        while (grandNode !== null) {
-                          var grandTag = grandNode.tag;
-                          if (grandTag === HostRoot || grandTag === HostPortal) {
-                            var grandContainer = grandNode.stateNode.containerInfo;
-                            if (isMatchingRootContainer(grandContainer, targetContainerNode)) {
-                              return;
-                            }
-                          }
-                          grandNode = grandNode.return;
-                        }
-                      }
-                      while (container !== null) {
-                        var parentNode = getClosestInstanceFromNode(container);
-                        if (parentNode === null) {
-                          return;
-                        }
-                        var parentTag = parentNode.tag;
-                        if (parentTag === HostComponent || parentTag === HostText) {
-                          node = ancestorInst = parentNode;
-                          continue mainLoop;
-                        }
-                        container = container.parentNode;
-                      }
-                    }
-                    node = node.return;
+                mainLoop: while (true) {
+                  if (node === null) {
+                    return;
                   }
+                  var nodeTag = node.tag;
+                  if (nodeTag === HostRoot || nodeTag === HostPortal) {
+                    var container = node.stateNode.containerInfo;
+                    if (isMatchingRootContainer(container, targetContainerNode)) {
+                      break;
+                    }
+                    if (nodeTag === HostPortal) {
+                      var grandNode = node.return;
+                      while (grandNode !== null) {
+                        var grandTag = grandNode.tag;
+                        if (grandTag === HostRoot || grandTag === HostPortal) {
+                          var grandContainer = grandNode.stateNode.containerInfo;
+                          if (isMatchingRootContainer(grandContainer, targetContainerNode)) {
+                            return;
+                          }
+                        }
+                        grandNode = grandNode.return;
+                      }
+                    }
+                    while (container !== null) {
+                      var parentNode = getClosestInstanceFromNode(container);
+                      if (parentNode === null) {
+                        return;
+                      }
+                      var parentTag = parentNode.tag;
+                      if (parentTag === HostComponent || parentTag === HostText) {
+                        node = ancestorInst = parentNode;
+                        continue mainLoop;
+                      }
+                      container = container.parentNode;
+                    }
+                  }
+                  node = node.return;
+                }
               }
             }
             batchedUpdates(function() {
@@ -9357,10 +9386,8 @@
                 } else if (typeof nextProp === "number") {
                   setTextContent(domElement, "" + nextProp);
                 }
-              } else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING)
-                ;
-              else if (propKey === AUTOFOCUS)
-                ;
+              } else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING) ;
+              else if (propKey === AUTOFOCUS) ;
               else if (registrationNameDependencies.hasOwnProperty(propKey)) {
                 if (nextProp != null) {
                   if (typeof nextProp !== "function") {
@@ -9576,12 +9603,9 @@
                     styleUpdates[styleName] = "";
                   }
                 }
-              } else if (propKey === DANGEROUSLY_SET_INNER_HTML || propKey === CHILDREN)
-                ;
-              else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING)
-                ;
-              else if (propKey === AUTOFOCUS)
-                ;
+              } else if (propKey === DANGEROUSLY_SET_INNER_HTML || propKey === CHILDREN) ;
+              else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING) ;
+              else if (propKey === AUTOFOCUS) ;
               else if (registrationNameDependencies.hasOwnProperty(propKey)) {
                 if (!updatePayload) {
                   updatePayload = [];
@@ -9640,8 +9664,7 @@
                 if (typeof nextProp === "string" || typeof nextProp === "number") {
                   (updatePayload = updatePayload || []).push(propKey, "" + nextProp);
                 }
-              } else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING)
-                ;
+              } else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING) ;
               else if (registrationNameDependencies.hasOwnProperty(propKey)) {
                 if (nextProp != null) {
                   if (typeof nextProp !== "function") {
@@ -9752,6 +9775,8 @@
               for (var _i = 0; _i < attributes.length; _i++) {
                 var name = attributes[_i].name.toLowerCase();
                 switch (name) {
+                  // Controlled attributes are not validated
+                  // TODO: Only ignore them on controlled tags.
                   case "value":
                     break;
                   case "checked":
@@ -9798,12 +9823,10 @@
               typeof isCustomComponentTag === "boolean") {
                 var serverValue = void 0;
                 var propertyInfo = isCustomComponentTag && enableCustomElementPropertySupport ? null : getPropertyInfo(propKey);
-                if (rawProps[SUPPRESS_HYDRATION_WARNING] === true)
-                  ;
+                if (rawProps[SUPPRESS_HYDRATION_WARNING] === true) ;
                 else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING || // Controlled attributes are not validated
                 // TODO: Only ignore them on controlled tags.
-                propKey === "value" || propKey === "checked" || propKey === "selected")
-                  ;
+                propKey === "value" || propKey === "checked" || propKey === "selected") ;
                 else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
                   var serverHTML = domElement.innerHTML;
                   var nextHtml = nextProp ? nextProp[HTML$1] : void 0;
@@ -10021,24 +10044,37 @@
             };
             var isTagValidWithParent = function(tag, parentTag) {
               switch (parentTag) {
+                // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-inselect
                 case "select":
                   return tag === "option" || tag === "optgroup" || tag === "#text";
                 case "optgroup":
                   return tag === "option" || tag === "#text";
+                // Strictly speaking, seeing an <option> doesn't mean we're in a <select>
+                // but
                 case "option":
                   return tag === "#text";
+                // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-intd
+                // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-incaption
+                // No special behavior since these rules fall back to "in body" mode for
+                // all except special table nodes which cause bad parsing behavior anyway.
+                // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-intr
                 case "tr":
                   return tag === "th" || tag === "td" || tag === "style" || tag === "script" || tag === "template";
+                // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-intbody
                 case "tbody":
                 case "thead":
                 case "tfoot":
                   return tag === "tr" || tag === "style" || tag === "script" || tag === "template";
+                // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-incolgroup
                 case "colgroup":
                   return tag === "col" || tag === "template";
+                // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-intable
                 case "table":
                   return tag === "caption" || tag === "colgroup" || tag === "tbody" || tag === "tfoot" || tag === "thead" || tag === "style" || tag === "script" || tag === "template";
+                // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-inhead
                 case "head":
                   return tag === "base" || tag === "basefont" || tag === "bgsound" || tag === "link" || tag === "meta" || tag === "title" || tag === "noscript" || tag === "noframes" || tag === "style" || tag === "script" || tag === "template";
+                // https://html.spec.whatwg.org/multipage/semantics.html#the-html-element
                 case "html":
                   return tag === "head" || tag === "body" || tag === "frameset";
                 case "frameset":
@@ -10599,8 +10635,7 @@
             {
               if (instance.nodeType === ELEMENT_NODE) {
                 warnForDeletedHydratableElement(parentContainer, instance);
-              } else if (instance.nodeType === COMMENT_NODE)
-                ;
+              } else if (instance.nodeType === COMMENT_NODE) ;
               else {
                 warnForDeletedHydratableText(parentContainer, instance);
               }
@@ -10612,8 +10647,7 @@
               if (parentNode !== null) {
                 if (instance.nodeType === ELEMENT_NODE) {
                   warnForDeletedHydratableElement(parentNode, instance);
-                } else if (instance.nodeType === COMMENT_NODE)
-                  ;
+                } else if (instance.nodeType === COMMENT_NODE) ;
                 else {
                   warnForDeletedHydratableText(parentNode, instance);
                 }
@@ -10625,8 +10659,7 @@
               if (isConcurrentMode || parentProps[SUPPRESS_HYDRATION_WARNING$1] !== true) {
                 if (instance.nodeType === ELEMENT_NODE) {
                   warnForDeletedHydratableElement(parentInstance, instance);
-                } else if (instance.nodeType === COMMENT_NODE)
-                  ;
+                } else if (instance.nodeType === COMMENT_NODE) ;
                 else {
                   warnForDeletedHydratableText(parentInstance, instance);
                 }
@@ -10646,15 +10679,13 @@
           function didNotFindHydratableInstanceWithinSuspenseInstance(parentInstance, type, props) {
             {
               var parentNode = parentInstance.parentNode;
-              if (parentNode !== null)
-                warnForInsertedHydratedElement(parentNode, type);
+              if (parentNode !== null) warnForInsertedHydratedElement(parentNode, type);
             }
           }
           function didNotFindHydratableTextInstanceWithinSuspenseInstance(parentInstance, text) {
             {
               var parentNode = parentInstance.parentNode;
-              if (parentNode !== null)
-                warnForInsertedHydratedText(parentNode, text);
+              if (parentNode !== null) warnForInsertedHydratedText(parentNode, text);
             }
           }
           function didNotFindHydratableInstance(parentType, parentProps, parentInstance, type, props, isConcurrentMode) {
@@ -11241,8 +11272,7 @@
                 }
                 case SuspenseComponent: {
                   var suspenseState = returnFiber.memoizedState;
-                  if (suspenseState.dehydrated !== null)
-                    didNotHydrateInstanceWithinSuspenseInstance(suspenseState.dehydrated, instance);
+                  if (suspenseState.dehydrated !== null) didNotHydrateInstanceWithinSuspenseInstance(suspenseState.dehydrated, instance);
                   break;
                 }
               }
@@ -11321,18 +11351,17 @@
                 case SuspenseComponent: {
                   var suspenseState = returnFiber.memoizedState;
                   var _parentInstance = suspenseState.dehydrated;
-                  if (_parentInstance !== null)
-                    switch (fiber.tag) {
-                      case HostComponent:
-                        var _type2 = fiber.type;
-                        var _props2 = fiber.pendingProps;
-                        didNotFindHydratableInstanceWithinSuspenseInstance(_parentInstance, _type2);
-                        break;
-                      case HostText:
-                        var _text2 = fiber.pendingProps;
-                        didNotFindHydratableTextInstanceWithinSuspenseInstance(_parentInstance, _text2);
-                        break;
-                    }
+                  if (_parentInstance !== null) switch (fiber.tag) {
+                    case HostComponent:
+                      var _type2 = fiber.type;
+                      var _props2 = fiber.pendingProps;
+                      didNotFindHydratableInstanceWithinSuspenseInstance(_parentInstance, _type2);
+                      break;
+                    case HostText:
+                      var _text2 = fiber.pendingProps;
+                      didNotFindHydratableTextInstanceWithinSuspenseInstance(_parentInstance, _text2);
+                      break;
+                  }
                   break;
                 }
                 default:
@@ -12621,8 +12650,7 @@
                       var update = createUpdate(NoTimestamp, lane);
                       update.tag = ForceUpdate;
                       var updateQueue = fiber.updateQueue;
-                      if (updateQueue === null)
-                        ;
+                      if (updateQueue === null) ;
                       else {
                         var sharedQueue = updateQueue.shared;
                         var pending = sharedQueue.pending;
@@ -12708,8 +12736,7 @@
               }
             }
             var value = context._currentValue;
-            if (lastFullyObservedContext === context)
-              ;
+            if (lastFullyObservedContext === context) ;
             else {
               var contextItem = {
                 context,
@@ -13006,6 +13033,7 @@
               case CaptureUpdate: {
                 workInProgress2.flags = workInProgress2.flags & ~ShouldCapture | DidCapture;
               }
+              // Intentional fallthrough
               case UpdateState: {
                 var _payload = update.payload;
                 var partialState;
@@ -17943,8 +17971,7 @@
               while (node !== null) {
                 if (node.tag === HostComponent || node.tag === HostText) {
                   appendInitialChild(parent, node.stateNode);
-                } else if (node.tag === HostPortal)
-                  ;
+                } else if (node.tag === HostPortal) ;
                 else if (node.child !== null) {
                   node.child.return = node;
                   node = node.child;
@@ -18898,20 +18925,19 @@
                       onPostCommit(id, phase, passiveEffectDuration, commitTime2);
                     }
                     var parentFiber = finishedWork.return;
-                    outer:
-                      while (parentFiber !== null) {
-                        switch (parentFiber.tag) {
-                          case HostRoot:
-                            var root3 = parentFiber.stateNode;
-                            root3.passiveEffectDuration += passiveEffectDuration;
-                            break outer;
-                          case Profiler:
-                            var parentStateNode = parentFiber.stateNode;
-                            parentStateNode.passiveEffectDuration += passiveEffectDuration;
-                            break outer;
-                        }
-                        parentFiber = parentFiber.return;
+                    outer: while (parentFiber !== null) {
+                      switch (parentFiber.tag) {
+                        case HostRoot:
+                          var root3 = parentFiber.stateNode;
+                          root3.passiveEffectDuration += passiveEffectDuration;
+                          break outer;
+                        case Profiler:
+                          var parentStateNode = parentFiber.stateNode;
+                          parentStateNode.passiveEffectDuration += passiveEffectDuration;
+                          break outer;
                       }
+                      parentFiber = parentFiber.return;
+                    }
                     break;
                   }
                 }
@@ -19058,20 +19084,19 @@
                       }
                       enqueuePendingPassiveProfilerEffect(finishedWork);
                       var parentFiber = finishedWork.return;
-                      outer:
-                        while (parentFiber !== null) {
-                          switch (parentFiber.tag) {
-                            case HostRoot:
-                              var root3 = parentFiber.stateNode;
-                              root3.effectDuration += effectDuration;
-                              break outer;
-                            case Profiler:
-                              var parentStateNode = parentFiber.stateNode;
-                              parentStateNode.effectDuration += effectDuration;
-                              break outer;
-                          }
-                          parentFiber = parentFiber.return;
+                      outer: while (parentFiber !== null) {
+                        switch (parentFiber.tag) {
+                          case HostRoot:
+                            var root3 = parentFiber.stateNode;
+                            root3.effectDuration += effectDuration;
+                            break outer;
+                          case Profiler:
+                            var parentStateNode = parentFiber.stateNode;
+                            parentStateNode.effectDuration += effectDuration;
+                            break outer;
                         }
+                        parentFiber = parentFiber.return;
+                      }
                     }
                   }
                   break;
@@ -19163,8 +19188,7 @@
                       captureCommitPhaseError(finishedWork, finishedWork.return, error2);
                     }
                   }
-                } else if ((node.tag === OffscreenComponent || node.tag === LegacyHiddenComponent) && node.memoizedState !== null && node !== finishedWork)
-                  ;
+                } else if ((node.tag === OffscreenComponent || node.tag === LegacyHiddenComponent) && node.memoizedState !== null && node !== finishedWork) ;
                 else if (node.child !== null) {
                   node.child.return = node;
                   node = node.child;
@@ -19282,31 +19306,30 @@
           }
           function getHostSibling(fiber) {
             var node = fiber;
-            siblings:
-              while (true) {
-                while (node.sibling === null) {
-                  if (node.return === null || isHostParent(node.return)) {
-                    return null;
-                  }
-                  node = node.return;
+            siblings: while (true) {
+              while (node.sibling === null) {
+                if (node.return === null || isHostParent(node.return)) {
+                  return null;
                 }
-                node.sibling.return = node.return;
-                node = node.sibling;
-                while (node.tag !== HostComponent && node.tag !== HostText && node.tag !== DehydratedFragment) {
-                  if (node.flags & Placement) {
-                    continue siblings;
-                  }
-                  if (node.child === null || node.tag === HostPortal) {
-                    continue siblings;
-                  } else {
-                    node.child.return = node;
-                    node = node.child;
-                  }
+                node = node.return;
+              }
+              node.sibling.return = node.return;
+              node = node.sibling;
+              while (node.tag !== HostComponent && node.tag !== HostText && node.tag !== DehydratedFragment) {
+                if (node.flags & Placement) {
+                  continue siblings;
                 }
-                if (!(node.flags & Placement)) {
-                  return node.stateNode;
+                if (node.child === null || node.tag === HostPortal) {
+                  continue siblings;
+                } else {
+                  node.child.return = node;
+                  node = node.child;
                 }
               }
+              if (!(node.flags & Placement)) {
+                return node.stateNode;
+              }
+            }
           }
           function commitPlacement(finishedWork) {
             var parentFiber = getHostParentFiber(finishedWork);
@@ -19328,6 +19351,7 @@
                 insertOrAppendPlacementNodeIntoContainer(finishedWork, _before, _parent);
                 break;
               }
+              // eslint-disable-next-line-no-fallthrough
               default:
                 throw new Error("Invalid host parent fiber. This error is likely caused by a bug in React. Please file an issue.");
             }
@@ -19342,8 +19366,7 @@
               } else {
                 appendChildToContainer(parent, stateNode);
               }
-            } else if (tag === HostPortal)
-              ;
+            } else if (tag === HostPortal) ;
             else {
               var child = node.child;
               if (child !== null) {
@@ -19366,8 +19389,7 @@
               } else {
                 appendChild(parent, stateNode);
               }
-            } else if (tag === HostPortal)
-              ;
+            } else if (tag === HostPortal) ;
             else {
               var child = node.child;
               if (child !== null) {
@@ -19385,27 +19407,26 @@
           function commitDeletionEffects(root3, returnFiber, deletedFiber) {
             {
               var parent = returnFiber;
-              findParent:
-                while (parent !== null) {
-                  switch (parent.tag) {
-                    case HostComponent: {
-                      hostParent = parent.stateNode;
-                      hostParentIsContainer = false;
-                      break findParent;
-                    }
-                    case HostRoot: {
-                      hostParent = parent.stateNode.containerInfo;
-                      hostParentIsContainer = true;
-                      break findParent;
-                    }
-                    case HostPortal: {
-                      hostParent = parent.stateNode.containerInfo;
-                      hostParentIsContainer = true;
-                      break findParent;
-                    }
+              findParent: while (parent !== null) {
+                switch (parent.tag) {
+                  case HostComponent: {
+                    hostParent = parent.stateNode;
+                    hostParentIsContainer = false;
+                    break findParent;
                   }
-                  parent = parent.return;
+                  case HostRoot: {
+                    hostParent = parent.stateNode.containerInfo;
+                    hostParentIsContainer = true;
+                    break findParent;
+                  }
+                  case HostPortal: {
+                    hostParent = parent.stateNode.containerInfo;
+                    hostParentIsContainer = true;
+                    break findParent;
+                  }
                 }
+                parent = parent.return;
+              }
               if (hostParent === null) {
                 throw new Error("Expected to find a host parent. This error is likely caused by a bug in React. Please file an issue.");
               }
@@ -19430,6 +19451,7 @@
                   safelyDetachRef(deletedFiber, nearestMountedAncestor);
                 }
               }
+              // eslint-disable-next-line-no-fallthrough
               case HostText: {
                 {
                   var prevHostParent = hostParent;
@@ -20691,6 +20713,9 @@
               case RootFatalErrored: {
                 throw new Error("Root did not complete. This is a bug in React.");
               }
+              // Flow knows about invariant, so it complains if I add a break
+              // statement, but eslint doesn't know about invariant, so it complains
+              // if I do. eslint-disable-next-line no-fallthrough
               case RootErrored: {
                 commitRoot(root3, workInProgressRootRecoverableErrors, workInProgressTransitions);
                 break;
@@ -22317,67 +22342,71 @@
             } else if (typeof type === "string") {
               fiberTag = HostComponent;
             } else {
-              getTag:
-                switch (type) {
-                  case REACT_FRAGMENT_TYPE:
-                    return createFiberFromFragment(pendingProps.children, mode, lanes, key);
-                  case REACT_STRICT_MODE_TYPE:
-                    fiberTag = Mode;
-                    mode |= StrictLegacyMode;
-                    if ((mode & ConcurrentMode) !== NoMode) {
-                      mode |= StrictEffectsMode;
-                    }
-                    break;
-                  case REACT_PROFILER_TYPE:
-                    return createFiberFromProfiler(pendingProps, mode, lanes, key);
-                  case REACT_SUSPENSE_TYPE:
-                    return createFiberFromSuspense(pendingProps, mode, lanes, key);
-                  case REACT_SUSPENSE_LIST_TYPE:
-                    return createFiberFromSuspenseList(pendingProps, mode, lanes, key);
-                  case REACT_OFFSCREEN_TYPE:
-                    return createFiberFromOffscreen(pendingProps, mode, lanes, key);
-                  case REACT_LEGACY_HIDDEN_TYPE:
-                  case REACT_SCOPE_TYPE:
-                  case REACT_CACHE_TYPE:
-                  case REACT_TRACING_MARKER_TYPE:
-                  case REACT_DEBUG_TRACING_MODE_TYPE:
-                  default: {
-                    if (typeof type === "object" && type !== null) {
-                      switch (type.$$typeof) {
-                        case REACT_PROVIDER_TYPE:
-                          fiberTag = ContextProvider;
-                          break getTag;
-                        case REACT_CONTEXT_TYPE:
-                          fiberTag = ContextConsumer;
-                          break getTag;
-                        case REACT_FORWARD_REF_TYPE:
-                          fiberTag = ForwardRef;
-                          {
-                            resolvedType = resolveForwardRefForHotReloading(resolvedType);
-                          }
-                          break getTag;
-                        case REACT_MEMO_TYPE:
-                          fiberTag = MemoComponent;
-                          break getTag;
-                        case REACT_LAZY_TYPE:
-                          fiberTag = LazyComponent;
-                          resolvedType = null;
-                          break getTag;
-                      }
-                    }
-                    var info = "";
-                    {
-                      if (type === void 0 || typeof type === "object" && type !== null && Object.keys(type).length === 0) {
-                        info += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.";
-                      }
-                      var ownerName = owner ? getComponentNameFromFiber(owner) : null;
-                      if (ownerName) {
-                        info += "\n\nCheck the render method of `" + ownerName + "`.";
-                      }
-                    }
-                    throw new Error("Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) " + ("but got: " + (type == null ? type : typeof type) + "." + info));
+              getTag: switch (type) {
+                case REACT_FRAGMENT_TYPE:
+                  return createFiberFromFragment(pendingProps.children, mode, lanes, key);
+                case REACT_STRICT_MODE_TYPE:
+                  fiberTag = Mode;
+                  mode |= StrictLegacyMode;
+                  if ((mode & ConcurrentMode) !== NoMode) {
+                    mode |= StrictEffectsMode;
                   }
+                  break;
+                case REACT_PROFILER_TYPE:
+                  return createFiberFromProfiler(pendingProps, mode, lanes, key);
+                case REACT_SUSPENSE_TYPE:
+                  return createFiberFromSuspense(pendingProps, mode, lanes, key);
+                case REACT_SUSPENSE_LIST_TYPE:
+                  return createFiberFromSuspenseList(pendingProps, mode, lanes, key);
+                case REACT_OFFSCREEN_TYPE:
+                  return createFiberFromOffscreen(pendingProps, mode, lanes, key);
+                case REACT_LEGACY_HIDDEN_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                case REACT_SCOPE_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                case REACT_CACHE_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                case REACT_TRACING_MARKER_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                case REACT_DEBUG_TRACING_MODE_TYPE:
+                // eslint-disable-next-line no-fallthrough
+                default: {
+                  if (typeof type === "object" && type !== null) {
+                    switch (type.$$typeof) {
+                      case REACT_PROVIDER_TYPE:
+                        fiberTag = ContextProvider;
+                        break getTag;
+                      case REACT_CONTEXT_TYPE:
+                        fiberTag = ContextConsumer;
+                        break getTag;
+                      case REACT_FORWARD_REF_TYPE:
+                        fiberTag = ForwardRef;
+                        {
+                          resolvedType = resolveForwardRefForHotReloading(resolvedType);
+                        }
+                        break getTag;
+                      case REACT_MEMO_TYPE:
+                        fiberTag = MemoComponent;
+                        break getTag;
+                      case REACT_LAZY_TYPE:
+                        fiberTag = LazyComponent;
+                        resolvedType = null;
+                        break getTag;
+                    }
+                  }
+                  var info = "";
+                  {
+                    if (type === void 0 || typeof type === "object" && type !== null && Object.keys(type).length === 0) {
+                      info += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.";
+                    }
+                    var ownerName = owner ? getComponentNameFromFiber(owner) : null;
+                    if (ownerName) {
+                      info += "\n\nCheck the render method of `" + ownerName + "`.";
+                    }
+                  }
+                  throw new Error("Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) " + ("but got: " + (type == null ? type : typeof type) + "." + info));
                 }
+              }
             }
             var fiber = createFiber(fiberTag, pendingProps, key, mode);
             fiber.elementType = type;
@@ -23561,19 +23590,19 @@
         (function() {
           "use strict";
           var React2 = require_react();
-          var REACT_ELEMENT_TYPE = Symbol.for("react.element");
-          var REACT_PORTAL_TYPE = Symbol.for("react.portal");
-          var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
-          var REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode");
-          var REACT_PROFILER_TYPE = Symbol.for("react.profiler");
-          var REACT_PROVIDER_TYPE = Symbol.for("react.provider");
-          var REACT_CONTEXT_TYPE = Symbol.for("react.context");
-          var REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref");
-          var REACT_SUSPENSE_TYPE = Symbol.for("react.suspense");
-          var REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list");
-          var REACT_MEMO_TYPE = Symbol.for("react.memo");
-          var REACT_LAZY_TYPE = Symbol.for("react.lazy");
-          var REACT_OFFSCREEN_TYPE = Symbol.for("react.offscreen");
+          var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element");
+          var REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal");
+          var REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment");
+          var REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode");
+          var REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler");
+          var REACT_PROVIDER_TYPE = /* @__PURE__ */ Symbol.for("react.provider");
+          var REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context");
+          var REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref");
+          var REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense");
+          var REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list");
+          var REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo");
+          var REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+          var REACT_OFFSCREEN_TYPE = /* @__PURE__ */ Symbol.for("react.offscreen");
           var MAYBE_ITERATOR_SYMBOL = Symbol.iterator;
           var FAUX_ITERATOR_SYMBOL = "@@iterator";
           function getIteratorFn(maybeIterable) {
@@ -23619,7 +23648,7 @@
           var enableDebugTracing = false;
           var REACT_MODULE_REFERENCE;
           {
-            REACT_MODULE_REFERENCE = Symbol.for("react.module.reference");
+            REACT_MODULE_REFERENCE = /* @__PURE__ */ Symbol.for("react.module.reference");
           }
           function isValidElementType(type) {
             if (typeof type === "string" || typeof type === "function") {
@@ -24510,13 +24539,18 @@
     const [currentPath, setCurrentPath] = (0, import_react.useState)("");
     const [keys, setKeys] = (0, import_react.useState)([]);
     const [nextAfterKey, setNextAfterKey] = (0, import_react.useState)();
+    const [keysProgress, setKeysProgress] = (0, import_react.useState)(null);
+    const [isLoadingKeys, setIsLoadingKeys] = (0, import_react.useState)(false);
     const [selectedKey, setSelectedKey] = (0, import_react.useState)(null);
     const [preview, setPreview] = (0, import_react.useState)(null);
     const [error, setError] = (0, import_react.useState)(null);
     const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
     const [searchResults, setSearchResults] = (0, import_react.useState)([]);
     const [isSearching, setIsSearching] = (0, import_react.useState)(false);
-    const [searchCaseSensitive, setSearchCaseSensitive] = (0, import_react.useState)(false);
+    const [searchType, setSearchType] = (0, import_react.useState)("both");
+    const [searchExactMatch, setSearchExactMatch] = (0, import_react.useState)(false);
+    const [searchProgress, setSearchProgress] = (0, import_react.useState)(null);
+    const [searchSummary, setSearchSummary] = (0, import_react.useState)(null);
     const [isLoading, setIsLoading] = (0, import_react.useState)(false);
     const [isWriteMode, setIsWriteMode] = (0, import_react.useState)(false);
     const [showAddBucketForm, setShowAddBucketForm] = (0, import_react.useState)(false);
@@ -24532,36 +24566,57 @@
       vscode.postMessage(msg);
     }
     function loadKeys(bucketPath, afterKey) {
-      console.log("[DEBUG] loadKeys called with bucketPath:", bucketPath, "afterKey:", afterKey);
       console.time(`loadKeys-${bucketPath || "root"}`);
       setIsLoading(true);
+      setIsLoadingKeys(true);
       setError(null);
+      setKeysProgress(null);
       const normalizedPath = bucketPath || "";
       if (normalizedPath !== currentPath) {
-        console.log("[DEBUG] Updating currentPath from:", currentPath, "to:", normalizedPath);
         setCurrentPath(normalizedPath);
       }
-      if (normalizedPath) {
-        console.log("[DEBUG] Current path parts:", normalizedPath.split("/"));
+      if (!afterKey) {
+        setKeys([]);
+        setNextAfterKey(void 0);
       }
-      post({ type: "listKeys", bucketPath: normalizedPath, afterKey });
+      post({ type: "listKeys", bucketPath: normalizedPath, afterKey, streaming: true });
       setTimeout(() => {
         setIsLoading(false);
-        console.log("[DEBUG] Loading timeout - forced stop");
         console.timeEnd(`loadKeys-${bucketPath || "root"}`);
       }, 1e4);
     }
     function handleSearch() {
       if (searchQuery.trim() === "") {
         setSearchResults([]);
+        setSearchProgress(null);
+        setSearchSummary(null);
         return;
       }
       setIsSearching(true);
-      post({ type: "search", query: searchQuery.trim(), limit: 100, caseSensitive: searchCaseSensitive });
+      setSearchResults([]);
+      setSearchProgress(null);
+      setSearchSummary(null);
+      post({
+        type: "search",
+        query: searchQuery.trim(),
+        limit: 1e3,
+        // Higher limit for streaming
+        caseSensitive: false,
+        // Always case-insensitive
+        searchType,
+        exactMatch: searchExactMatch,
+        streaming: true,
+        // Always use streaming
+        maxDepth: 50
+        // Reasonable depth limit for large DBs
+      });
+    }
+    function handleCancelSearch() {
+      setIsSearching(false);
+      post({ type: "cancelSearch" });
     }
     function handleCreateBucket() {
-      if (newBucketName.trim() === "")
-        return;
+      if (newBucketName.trim() === "") return;
       const bucketPath = currentPath ? `${currentPath}/${newBucketName.trim()}` : newBucketName.trim();
       console.log("[DEBUG] Creating bucket with path:", bucketPath);
       post({ type: "createBucket", bucketPath });
@@ -24569,8 +24624,7 @@
       setShowAddBucketForm(false);
     }
     function handlePutKey() {
-      if (newKeyName.trim() === "" || currentPath === "")
-        return;
+      if (newKeyName.trim() === "" || currentPath === "") return;
       const keyName = newKeyName.trim();
       const bucketPath = currentPath;
       console.log("[DEBUG] Adding key with detailed info:", {
@@ -24593,8 +24647,7 @@
       setShowAddKeyForm(false);
     }
     function handleDeleteKey(key) {
-      if (!isWriteMode || key.isBucket)
-        return;
+      if (!isWriteMode || key.isBucket) return;
       console.log("[DEBUG] handleDeleteKey called for:", safeAtob(key.keyBase64));
       setConfirmDelete({
         item: key,
@@ -24603,8 +24656,7 @@
       });
     }
     function handleDeleteBucket(key) {
-      if (!isWriteMode || !key.isBucket)
-        return;
+      if (!isWriteMode || !key.isBucket) return;
       const bucketName = safeAtob(key.keyBase64);
       const bucketPath = currentPath;
       console.log("[DEBUG] handleDeleteBucket - FULL DETAILS:", {
@@ -24620,8 +24672,7 @@
       });
     }
     function handleConfirmDelete() {
-      if (!confirmDelete)
-        return;
+      if (!confirmDelete) return;
       setSelectedKey(null);
       setPreview(null);
       if (confirmDelete.type === "key") {
@@ -24643,14 +24694,12 @@
       setConfirmDelete(null);
     }
     function handleEditValue() {
-      if (!selectedKey || !preview)
-        return;
+      if (!selectedKey || !preview) return;
       setIsEditingValue(true);
       setEditedValue(preview.content);
     }
     function handleSaveValue() {
-      if (!selectedKey || !isEditingValue)
-        return;
+      if (!selectedKey || !isEditingValue) return;
       const keyBase64 = selectedKey.keyBase64;
       const valueBase64 = btoa(editedValue);
       post({ type: "putKey", bucketPath: currentPath, keyBase64, valueBase64 });
@@ -24662,18 +24711,21 @@
     }
     const pendingHighlightRef = (0, import_react.useRef)(null);
     function navigateToSearchResult(result) {
+      if (isSearching) {
+        handleCancelSearch();
+      }
       const pathParts = result.path;
-      const bucketPath = pathParts.join("/");
-      console.log("[DEBUG] Search result selected:", {
-        bucketPath,
-        keyBase64: result.keyBase64,
-        valueSize: result.valueSize,
-        path: result.path,
-        isBucket: result.isBucket
-      });
+      let bucketPath = pathParts.join("/");
+      if (result.isBucket) {
+        const bucketName = safeBase64ToUtf8(result.keyBase64);
+        bucketPath = pathParts.length === 0 ? bucketName : `${bucketPath}/${bucketName}`;
+      }
       setCurrentPath(bucketPath);
       setPreview(null);
       setSearchResults([]);
+      setSearchProgress(null);
+      setSearchSummary(null);
+      setNextAfterKey(void 0);
       if (!result.isBucket) {
         pendingHighlightRef.current = { bucketPath, keyBase64: result.keyBase64, valueSize: result.valueSize, loadedKeys: [] };
       } else {
@@ -24685,11 +24737,6 @@
     (0, import_react.useEffect)(() => {
       const listener = (event) => {
         const msg = event.data;
-        console.log(`[DEBUG] Message received: ${msg.type}`, {
-          messageType: msg.type,
-          currentPath,
-          messageData: msg
-        });
         if (msg.type === "bucketCreated" || msg.type === "bucketDeleted") {
           console.log("[DEBUG] Bucket operation details:", {
             operation: msg.type,
@@ -24700,20 +24747,8 @@
         if (msg.type === "keys") {
           const res = msg;
           const responseBucketPath = msg.bucketPath || "";
-          console.log("[DEBUG] Keys response received with detailed info:", {
-            responseBucketPath,
-            currentPath,
-            keysCount: res.items?.length || 0,
-            afterKey: msg.afterKey
-          });
           console.timeEnd(`loadKeys-${responseBucketPath || "root"}`);
           if (currentPath !== responseBucketPath) {
-            console.log(
-              "[DEBUG] Fixing path mismatch - updating currentPath from",
-              currentPath,
-              "to",
-              responseBucketPath
-            );
             setCurrentPath(responseBucketPath);
           }
           setKeys((prev) => msg.afterKey ? [...prev, ...res.items || []] : res.items || []);
@@ -24721,15 +24756,8 @@
           setIsLoading(false);
           const pending = pendingHighlightRef.current;
           if (pending) {
-            console.log("[DEBUG] Looking for keyBase64:", pending.keyBase64, "in loaded keys.");
-            console.log("[DEBUG] Decoded pending.keyBase64:", safeAtob(pending.keyBase64));
-            console.log("[DEBUG] Number of keys loaded:", res.items.length);
-            res.items.forEach((k, idx) => {
-              console.log(`[DEBUG] Page key[${idx}]:`, k.keyBase64, "| Decoded:", safeAtob(k.keyBase64));
-            });
             const foundInPage = res.items.find((k) => k.keyBase64 === pending.keyBase64);
             if (foundInPage) {
-              console.log("[DEBUG] Found key to select:", safeAtob(foundInPage.keyBase64));
               setSelectedKey(null);
               setTimeout(() => {
                 setSelectedKey(foundInPage);
@@ -24737,17 +24765,14 @@
                 pendingHighlightRef.current = null;
               }, 10);
             } else if (res.nextAfterKey) {
-              console.log("[DEBUG] Key not found in this page, paging for more... nextAfterKey:", res.nextAfterKey);
               pendingHighlightRef.current = pending;
               loadKeys(msg.bucketPath || "", res.nextAfterKey);
             } else {
-              console.log("[DEBUG] Key not found after paging all pages:", safeAtob(pending.keyBase64));
               const syntheticKey = {
                 keyBase64: pending.keyBase64,
                 valueSize: pending.valueSize || 1,
                 isBucket: false
               };
-              console.log("[DEBUG] Using synthetic key as fallback:", safeAtob(syntheticKey.keyBase64));
               setSelectedKey(syntheticKey);
               post({ type: "readHead", bucketPath: pending.bucketPath, keyBase64: pending.keyBase64 });
               pendingHighlightRef.current = null;
@@ -24756,7 +24781,6 @@
         } else if (msg.type === "head") {
           const res = msg;
           const content = safeBase64ToUtf8(res.valueHeadBase64);
-          console.log("[DEBUG] Preview loaded:", content.slice(0, 100));
           if (selectedKey && !selectedKey.isBucket) {
             setSelectedKey({
               ...selectedKey,
@@ -24765,12 +24789,39 @@
           }
           setPreview({ content, totalSize: res.totalSize });
         } else if (msg.type === "error") {
-          console.log("[DEBUG] Error received:", msg.message);
           setError(msg.message);
           setIsLoading(false);
         } else if (msg.type === "searchResults") {
           setSearchResults(msg.items || []);
           setIsSearching(false);
+          setSearchProgress(null);
+        } else if (msg.type === "searchResult") {
+          setSearchResults((prev) => [...prev, msg.item]);
+        } else if (msg.type === "searchProgress") {
+          setSearchProgress(msg.progress);
+        } else if (msg.type === "searchComplete") {
+          setIsSearching(false);
+          setSearchSummary(msg.summary);
+          setSearchProgress(null);
+        } else if (msg.type === "searchError") {
+          setIsSearching(false);
+          setError(`Search error: ${msg.error}`);
+          setSearchProgress(null);
+        } else if (msg.type === "keyItem") {
+          setIsLoading(false);
+          setKeys((prev) => [...prev, msg.item]);
+        } else if (msg.type === "keyProgress") {
+          setKeysProgress(msg.progress);
+        } else if (msg.type === "keyComplete") {
+          setIsLoadingKeys(false);
+          setKeysProgress(null);
+          setNextAfterKey(msg.complete.nextAfterKey);
+          console.timeEnd(`loadKeys-${msg.bucketPath || "root"}`);
+        } else if (msg.type === "keyError") {
+          setIsLoadingKeys(false);
+          setIsLoading(false);
+          setError(`Keys loading error: ${msg.error}`);
+          setKeysProgress(null);
         } else if (msg.type === "bucketCreated") {
           const newBucketPath = msg.bucketPath;
           console.log("[DEBUG] Bucket created:", newBucketPath);
@@ -24907,17 +24958,10 @@
       loadKeys("");
     }
     function formatSize(size) {
-      if (size < 1024)
-        return size + " B";
-      if (size < 1024 * 1024)
-        return (size / 1024).toFixed(1) + " KB";
+      if (size < 1024) return size + " B";
+      if (size < 1024 * 1024) return (size / 1024).toFixed(1) + " KB";
       return (size / 1024 / 1024).toFixed(1) + " MB";
     }
-    (0, import_react.useEffect)(() => {
-      if (selectedKey) {
-        console.log("[DEBUG] Rendering preview panel for selectedKey:", safeAtob(selectedKey.keyBase64));
-      }
-    }, [selectedKey]);
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "app", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "header", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "header-top", children: [
@@ -24940,17 +24984,13 @@
           currentPath && currentPath.split("/").filter(Boolean).map((part, i, arr) => {
             const pathParts = arr.slice(0, i + 1);
             const pathUpToHere = pathParts.join("/");
-            console.log(`[DEBUG] Breadcrumb part ${i}:`, {
-              part,
-              pathUpToHere,
-              fullCurrentPath: currentPath
-            });
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
               " / ",
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
                 setCurrentPath(pathUpToHere);
                 setSelectedKey(null);
                 setPreview(null);
+                setNextAfterKey(void 0);
                 loadKeys(pathUpToHere);
               }, children: part })
             ] }, i);
@@ -24959,61 +24999,104 @@
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-section", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-controls", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-input-container", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-main-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-input-container", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "input",
+                {
+                  ref: searchInputRef,
+                  type: "text",
+                  className: "search-input",
+                  value: searchQuery,
+                  onChange: (e) => setSearchQuery(e.target.value),
+                  placeholder: "Search keys/values...",
+                  onKeyDown: (e) => e.key === "Enter" && handleSearch(),
+                  spellCheck: false
+                }
+              ),
+              searchQuery && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "clear-search-container", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "button",
+                {
+                  className: "clear-search-button",
+                  onClick: () => {
+                    setSearchQuery("");
+                    setSearchResults([]);
+                    if (searchInputRef.current) {
+                      searchInputRef.current.focus();
+                    }
+                  },
+                  title: "Clear search",
+                  tabIndex: -1,
+                  children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { width: "16", height: "16", viewBox: "0 0 16 16", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "8", cy: "8", r: "7", stroke: "var(--vscode-input-foreground, #d6cfa6)", strokeWidth: "2", fill: "none" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "5.5", y1: "5.5", x2: "10.5", y2: "10.5", stroke: "var(--vscode-input-foreground, #d6cfa6)", strokeWidth: "2", strokeLinecap: "round" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "10.5", y1: "5.5", x2: "5.5", y2: "10.5", stroke: "var(--vscode-input-foreground, #d6cfa6)", strokeWidth: "2", strokeLinecap: "round" })
+                  ] })
+                }
+              ) })
+            ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "input",
-              {
-                ref: searchInputRef,
-                type: "text",
-                className: "search-input",
-                value: searchQuery,
-                onChange: (e) => setSearchQuery(e.target.value),
-                placeholder: "Search keys/values...",
-                onKeyDown: (e) => e.key === "Enter" && handleSearch(),
-                spellCheck: false
-              }
-            ),
-            searchQuery && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "clear-search-container", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
               "button",
               {
-                className: "clear-search-button",
-                onClick: () => {
-                  setSearchQuery("");
-                  setSearchResults([]);
-                  if (searchInputRef.current) {
-                    searchInputRef.current.focus();
-                  }
-                },
-                title: "Clear search",
-                tabIndex: -1,
-                children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { width: "16", height: "16", viewBox: "0 0 16 16", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "8", cy: "8", r: "7", stroke: "var(--vscode-input-foreground, #d6cfa6)", strokeWidth: "2", fill: "none" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "5.5", y1: "5.5", x2: "10.5", y2: "10.5", stroke: "var(--vscode-input-foreground, #d6cfa6)", strokeWidth: "2", strokeLinecap: "round" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", { x1: "10.5", y1: "5.5", x2: "5.5", y2: "10.5", stroke: "var(--vscode-input-foreground, #d6cfa6)", strokeWidth: "2", strokeLinecap: "round" })
-                ] })
+                onClick: isSearching ? handleCancelSearch : handleSearch,
+                className: isSearching ? "cancel-button" : "search-button",
+                children: isSearching ? "\u23F9 Cancel" : "\u{1F50D} Search"
               }
-            ) })
+            )
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-            "button",
-            {
-              onClick: handleSearch,
-              disabled: isSearching,
-              className: "search-button",
-              children: isSearching ? "Searching..." : "Search"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "case-sensitive-label", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "input",
-              {
-                type: "checkbox",
-                checked: searchCaseSensitive,
-                onChange: (e) => setSearchCaseSensitive(e.target.checked)
-              }
-            ),
-            "Case sensitive"
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-options-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "exact-match-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                "input",
+                {
+                  type: "checkbox",
+                  checked: searchExactMatch,
+                  onChange: (e) => setSearchExactMatch(e.target.checked)
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Exact match" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-type-controls", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "search-type-label", children: "Type:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+                "select",
+                {
+                  className: "search-type-dropdown",
+                  value: searchType,
+                  onChange: (e) => setSearchType(e.target.value),
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "both", children: "Both" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "buckets", children: "Buckets only" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "keys", children: "Keys only" })
+                  ]
+                }
+              )
+            ] })
           ] })
+        ] }),
+        isSearching && searchProgress && (searchProgress.found > 0 || searchProgress.elapsed && !searchProgress.elapsed.includes("\xB5s") && !searchProgress.elapsed.includes("ns")) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "search-progress", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "progress-info", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+            "Found: ",
+            searchProgress.found
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+            "Depth: ",
+            searchProgress.depth
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+            "Time: ",
+            searchProgress.elapsed
+          ] }),
+          searchProgress.currentPath.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+            "Path: ",
+            searchProgress.currentPath.join("/")
+          ] })
+        ] }) }),
+        !isSearching && searchSummary && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-summary", children: [
+          "Search completed: ",
+          searchSummary.totalFound,
+          " results found in ",
+          searchSummary.elapsed
         ] }),
         searchResults.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-results", children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", { children: [
@@ -25068,10 +25151,8 @@
                   onChange: (e) => setNewBucketName(e.target.value),
                   placeholder: "Bucket name",
                   onKeyDown: (e) => {
-                    if (e.key === "Enter")
-                      handleCreateBucket();
-                    if (e.key === "Escape")
-                      setShowAddBucketForm(false);
+                    if (e.key === "Enter") handleCreateBucket();
+                    if (e.key === "Escape") setShowAddBucketForm(false);
                   }
                 }
               ),
@@ -25088,11 +25169,9 @@
                   onKeyDown: (e) => {
                     if (e.key === "Enter" && newKeyName.trim()) {
                       const valueInput = e.currentTarget.nextElementSibling;
-                      if (valueInput)
-                        valueInput.focus();
+                      if (valueInput) valueInput.focus();
                     }
-                    if (e.key === "Escape")
-                      setShowAddKeyForm(false);
+                    if (e.key === "Escape") setShowAddKeyForm(false);
                   }
                 }
               ),
@@ -25104,15 +25183,24 @@
                   onChange: (e) => setNewKeyValue(e.target.value),
                   placeholder: "Value",
                   onKeyDown: (e) => {
-                    if (e.key === "Enter")
-                      handlePutKey();
-                    if (e.key === "Escape")
-                      setShowAddKeyForm(false);
+                    if (e.key === "Enter") handlePutKey();
+                    if (e.key === "Escape") setShowAddKeyForm(false);
                   }
                 }
               ),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: handlePutKey, disabled: !newKeyName.trim(), children: "Add Key" })
             ] }),
+            isLoadingKeys && keysProgress && (keysProgress.loaded > 0 || parseFloat(keysProgress.elapsed) > 10) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "keys-progress", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "progress-info", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+                "Loading: ",
+                keysProgress.loaded,
+                " keys"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+                "Time: ",
+                keysProgress.elapsed
+              ] })
+            ] }) }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Key" }),
