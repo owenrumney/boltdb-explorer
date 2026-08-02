@@ -6,16 +6,57 @@ const ROOT = path.resolve(__dirname, "..");
 const pkgPath = path.join(ROOT, "package.json");
 const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
 
-try {
-  const tag = execSync("git describe --tags --exact-match", { cwd: ROOT, encoding: "utf-8" }).trim();
+function parseSemver(tag) {
+  const m = /^v(\d+)\.(\d+)\.(\d+)$/.exec(tag);
+  if (!m) return null;
+  return { tag, parts: [Number(m[1]), Number(m[2]), Number(m[3])] };
+}
+
+function compareSemverDesc(a, b) {
+  for (let i = 0; i < 3; i++) {
+    if (a.parts[i] !== b.parts[i]) return b.parts[i] - a.parts[i];
+  }
+  return 0;
+}
+
+function resolveReleaseTag() {
+  const refTag = process.env.GITHUB_REF_NAME;
+  if (parseSemver(refTag || "")) {
+    return refTag;
+  }
+
+  try {
+    const tags = execSync("git tag --points-at HEAD", {
+      cwd: ROOT,
+      encoding: "utf-8",
+    })
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map(parseSemver)
+      .filter(Boolean)
+      .sort(compareSemverDesc);
+    if (tags.length > 0) {
+      return tags[0].tag;
+    }
+  } catch {
+    // Fall through to package.json version.
+  }
+
+  return null;
+}
+
+// Sync version from release tag (v1.2.3 → 1.2.3) so package.json never drifts.
+const tag = resolveReleaseTag();
+if (tag) {
   const version = tag.replace(/^v/, "");
-  if (/^\d+\.\d+\.\d+$/.test(version) && pkg.version !== version) {
+  if (pkg.version !== version) {
     console.log(`Updating package.json version: ${pkg.version} → ${version}`);
     pkg.version = version;
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
   }
-} catch {
-  console.log("No exact git tag found, using version from package.json.");
+} else {
+  console.log("No release tag found, using version from package.json.");
 }
 
 for (const file of fs.readdirSync(ROOT)) {
